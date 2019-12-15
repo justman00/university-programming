@@ -4,8 +4,8 @@
 
 int main(void)
 {
-    int row = 2;
-    int col = 3;
+    int row = 10;
+    int col = 15;
     int c, d, matrix[row][col];
 
     printf("Enter the elements of first matrix\n");

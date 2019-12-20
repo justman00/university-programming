@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-void calc_func(float * arr, int size)
+void calc_func(float *arr, int size)
 {
     float sum = 0;
     int i;
@@ -11,7 +11,8 @@ void calc_func(float * arr, int size)
     {
         float current_number = *(arr + i);
 
-        if (0 <= current_number && 1 >= current_number) {
+        if (0 <= current_number && 1 >= current_number)
+        {
             sum = sum + current_number;
         }
     }

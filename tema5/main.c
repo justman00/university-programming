@@ -4,8 +4,8 @@
 
 int main(void)
 {
-    int row = 10;
-    int col = 15;
+    int row = 3;
+    int col = 2;
     int c, d, matrix[row][col];
 
     printf("Enter the elements of first matrix\n");
@@ -27,19 +27,24 @@ int main(void)
         }
     }
 
-    int x_axis[] = {};
-    int y_axis[] = {};
+    printf("\n");
+
     int i = 0;
     int j = 0;
     int sum = 0;
+    int pos = 0;
     int sum_cols[] = {};
+    int pos_nums[] = {};
 
     for (c = 0; c < col; c++)
     {
         if (sum != 0)
         {
-            printf("size of column %d is %d\n", j, sum);
+            printf("sum of column %d is %d\n", j, sum);
+            printf("number of positives of column %d is %d\n", j, pos);
             sum_cols[j] = sum;
+            pos_nums[j] = pos;
+            pos = 0;
             sum = 0;
             j++;
         }
@@ -51,24 +56,18 @@ int main(void)
             if (current_number > 0)
             {
                 sum = sum + current_number;
-                x_axis[i] = c;
-                y_axis[i] = d;
-
-                int x = x_axis[i];
-                int y = y_axis[i];
-                int num = matrix[y][x];
-                printf("the number is %d and the x is %d and the y is %d  and the i is %d\n", num, x, y, i);
                 i++;
+                pos++;
             }
         }
     }
 
     if (sum != 0)
     {
-        printf("size of column %d is %d\n", j, sum);
+        printf("sum of column %d is %d\n", j, sum);
+        printf("number of positives of column %d is %d\n", j, pos);
         sum_cols[j] = sum;
-        sum = 0;
-        j++;
+        pos_nums[j] = pos;
     }
 
     return 0;

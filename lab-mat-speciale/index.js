@@ -22,7 +22,7 @@ function buildMatrixes(graph) {
   console.log(adjacentMatrix);
 }
 
-function buildMatrix(graph, sameArcValue, notItselfValue) {
+function buildMatrix(graph, sameArcValue, notItselfValue, sameAndFinalValue = 0) {
     const keys = Object.keys(graph)
     .map(Number)
     .sort((a, b) => a - b);
@@ -42,7 +42,12 @@ function buildMatrix(graph, sameArcValue, notItselfValue) {
         if (isEnclosed) {
           row[k] = sameArcValue;
         } else {
-          row[k] = notItselfValue;
+            if(arcs.length > 0) {
+                row[k] = notItselfValue;
+            } else {
+                row[k] = sameAndFinalValue;
+            }
+
         }
       } else {
         if (Number.isInteger(vert)) {

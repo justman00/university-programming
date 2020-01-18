@@ -12,6 +12,8 @@ const g = {
   10: []
 };
 
+module.exports = g
+
 function buildMatrixes(graph) {
   const incidentMatrix = buildMatrix(graph, 2, -1);
   const adjacentMatrix = buildMatrix(graph, 1, 0);

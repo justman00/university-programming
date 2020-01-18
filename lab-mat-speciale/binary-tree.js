@@ -53,37 +53,39 @@ function DFS(startingNode, graph) {
   helper(stack);
 }
 
-BFS(1, g);
-
 function BFS(startingNode, graph) {
-    const queue = [];
-    const visited = new Set();
-  
-    queue.push(startingNode);
-  
-    function helper(q) {
-      if (q.length === 0) {
-        return;
-      }
-  
-      const current = q.shift();
-  
-      if (!visited.has(current)) {
-        console.log(current);
-        visited.add(current);
-  
-        const verts = graph[current];
-  
-        if (verts) {
-          for (let vert of verts) {
-            q.push(vert);
-          }
+  const queue = [];
+  const visited = new Set();
+
+  queue.push(startingNode);
+
+  function helper(q) {
+    if (q.length === 0) {
+      return;
+    }
+
+    const current = q.shift();
+
+    if (!visited.has(current)) {
+      console.log(current);
+      visited.add(current);
+
+      const verts = graph[current];
+
+      if (verts) {
+        for (let vert of verts) {
+          q.push(vert);
         }
       }
-  
-      helper(q);
     }
-  
-    helper(queue);
+
+    helper(q);
   }
 
+  helper(queue);
+}
+
+console.log('BFS');
+BFS(1, g);
+console.log('DFS');
+DFS(1, g);

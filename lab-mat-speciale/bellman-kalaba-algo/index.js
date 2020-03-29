@@ -91,7 +91,6 @@ const result = matrix[matrix.length - 1];
 
 console.log('After Step 3');
 utils.display(matrix, count);
-console.log(result)
 
 const stack = [];
 

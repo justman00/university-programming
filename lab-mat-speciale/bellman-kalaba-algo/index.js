@@ -1,7 +1,7 @@
 import * as utils from './utils';
 import nodes from './input';
 
-const size = utils.getMax(nodes);
+const [start, size] = utils.getMaxAndMin(nodes);
 const count = size + 1;
 let matrix = utils.getDefaultMatrix(size);
 let allNodes = [...nodes];
@@ -91,33 +91,35 @@ const result = matrix[matrix.length - 1];
 
 console.log('After Step 3');
 utils.display(matrix, count);
-let res = '';
+console.log(result)
 
 const stack = [];
 
-stack.push([result[0], 0]);
+stack.push([result[start], start]);
+const visited = new Set()
 
 while (stack.length) {
   const [roadLength, i] = stack.pop();
   const arcs = allNodes.filter(node => node[0] === i);
 
+  if(visited.has(i)) continue
+  visited.add(i)
+
   if (arcs.length === 0) {
-    res += i;
-    break;
+    continue;
   }
 
-  arcs.forEach((arc, index) => {
+  console.log(`From ${i} go:`)
+  arcs.forEach((arc) => {
     const weight = arc[2];
     const neighbour = arc[1];
 
     if (roadLength - result[neighbour] === weight) {
-      res += i;
-      const neighbourId = result.findIndex(num => num === result[neighbour]);
-      stack.push([result[neighbour], neighbourId]);
+      console.log(`${neighbour}`)
+      stack.push([result[neighbour], neighbour]);
     }
   });
+  console.log('\n')
 }
-
-console.log(res);
 
 console.log(`The shortest path: ${matrix[matrix.length - 1][1]}`);

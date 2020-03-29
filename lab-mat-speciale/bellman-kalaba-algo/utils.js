@@ -55,6 +55,17 @@ export function getMax(nodes) {
   return max;
 }
 
+export function getMaxAndMin(nodes) {
+  const uniqueValues = new Set();
+
+  nodes.forEach(([fromNode, toNode]) => {
+    uniqueValues.add(fromNode)
+    uniqueValues.add(toNode)
+  })
+
+  return [Math.min(...uniqueValues), Math.max(...uniqueValues)]
+}
+
 /**
  * Gets a square matrix with empty values based on length
  */

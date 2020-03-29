@@ -48,10 +48,9 @@ export function display(matrix, columnCount = matrix.length) {
  */
 export function getMax(nodes) {
   let max = 0;
-  let allNodes = Object.values(nodes);
-  for (let i = 0; i < allNodes.length; i++) {
-    if (allNodes[i][0] > max) max = allNodes[i][0];
-    if (allNodes[i][1] > max) max = allNodes[i][1];
+  for (let i = 0; i < nodes.length; i++) {
+    if (nodes[i][0] > max) max = nodes[i][0];
+    if (nodes[i][1] > max) max = nodes[i][1];
   }
   return max;
 }

@@ -4,7 +4,7 @@ import nodes from './input';
 const size = utils.getMax(nodes);
 const count = size + 1;
 let matrix = utils.getDefaultMatrix(size);
-let allNodes = Object.values(nodes);
+let allNodes = [...nodes];
 
 /**
  * Gets a node that matches Base and Target indexes
@@ -97,7 +97,7 @@ const stack = [];
 
 stack.push([result[0], 0]);
 
-while (stack.length > 0) {
+while (stack.length) {
   const [roadLength, i] = stack.pop();
   const arcs = allNodes.filter(node => node[0] === i);
 
@@ -120,4 +120,4 @@ while (stack.length > 0) {
 
 console.log(res);
 
-console.log(`The shortest path: ${matrix[matrix.length - 1][0]}`);
+console.log(`The shortest path: ${matrix[matrix.length - 1][1]}`);

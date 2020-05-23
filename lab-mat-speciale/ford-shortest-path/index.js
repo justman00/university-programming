@@ -99,7 +99,7 @@ function calculateShortestPath(startingNode, endNode) {
     }
   }
 
-  console.log(`Shprtest path to ${endNode} is of length: ${nodesMap[endNode]}`);
+  console.log(`Shortest path to ${endNode} is of length: ${nodesMap[endNode]}`);
   getShortestPath(nodesMap, endNode);
 }
 
@@ -127,7 +127,7 @@ function getShortestPath(nodesMap, targetNode) {
           str = str + outgoing + ' ';
 
           stack.push(outgoing);
-        }
+        }                                                                                                                                                                                                                       
       }
     });
 

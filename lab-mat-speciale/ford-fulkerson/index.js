@@ -1,4 +1,12 @@
-const input = require('./input')
+const input = [
+  [0, 16, 13, 0, 0, 0],
+  [0, 0, 10, 12, 0, 0],
+  [0, 4, 0, 0, 14, 0],
+  [0, 0, 9, 0, 0, 20],
+  [0, 0, 0, 7, 0, 4],
+  [0, 0, 0, 0, 0, 0],
+];
+
 
 function bfs(graph, source, final, parent) {
   const visited = [];
@@ -44,7 +52,6 @@ function fordFulkerson(graph, source, final) {
 
 	// parcurgem graphul si setam fluxul de la vertice la vertice
     for (let v = final; v !== source; v = parent[v]) {
-      console.log(parent, v, source, final, parent[v]);
       u = parent[v];
       pathFlow = Math.min(pathFlow, localGraph[u][v]);
     }
@@ -61,4 +68,4 @@ function fordFulkerson(graph, source, final) {
   return maxFlow;
 };
 
-console.log(fordFulkerson(input, 0, 5))
+console.log('Fluxul maxim este ', fordFulkerson(input, 0, 5))

@@ -1,5 +1,5 @@
 const g = {
-  //   0: [0, 1, 3, 5],
+  0: [0, 1, 3, 5],
   1: [2, 4],
   2: [3],
   3: [6, 7],
@@ -10,7 +10,7 @@ const g = {
   8: [],
   9: [],
   10: [11, 12],
-  11: [13, 14]
+  11: [13, 14],
 };
 
 class Node {
@@ -86,6 +86,6 @@ function BFS(startingNode, graph) {
 }
 
 console.log('BFS');
-BFS(1, g);
+BFS(0, g);
 console.log('DFS');
-DFS(1, g);
+DFS(0, g);

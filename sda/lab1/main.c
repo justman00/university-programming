@@ -1,3 +1,4 @@
+// VARIANTA 4
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -55,15 +56,18 @@ int main()
 
     for (int n = 0; n < 2; ++n)
     {
+        // parcurgem prin fiecare fiecare student
         struct student std = studenti[n];
         char fileName = std.formaInstruirii;
         char path[64];
+        // creem denumirea de file care o sa fie in conformitate cu forma lor de instruire
         snprintf(path, sizeof(path), "./%C.%s", fileName, fileEnding);
         printf("Acest este npp unui student %s\n", std.npp);
         printf("acesta este file-ul in care va fi scris studentul %s\n", path);
 
+        // deschidem acel file pentru a adauga, daca file-ul nu exista se va crea
         fptr = fopen(path, "ab");
-
+        // scriem direct in file
         fwrite(&std, sizeof(struct student), 1, fptr);
     }
 

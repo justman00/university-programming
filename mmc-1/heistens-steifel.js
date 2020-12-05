@@ -15,8 +15,8 @@ const err = Math.pow(10, -5);
 
 const main = () => {
   // se ia o valoare arbitrara fie x1 si x2 care reprezinta 2 puncte ale functiei cu 2 varibile
-  let x1 = 0;
-  let x2 = 0;
+  let x1 = 0.9;
+  let x2 = 0.1;
   const valoareaFunctieiInitiale = functiaInitiala(x1, x2);
   // se calculeaza valoarea gradientului functiei pentru acel punct
   let valG1 = grad1(x1, x2);

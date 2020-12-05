@@ -16,7 +16,7 @@ const alg_one = (n) => {
   return i;
 };
 
-// O(n*8^n)
+// O(8^n)
 const alg_two = (n) => {
   let iter = 0;
   let k = 1;
@@ -34,7 +34,7 @@ const alg_two = (n) => {
   return iter;
 };
 
-// O(n*log(n))??
+// O(n)
 const alg_three = (n) => {
   let iter = 0;
   let i = 2;
@@ -91,10 +91,9 @@ function main() {
         x: 3,
       },
     });
-
     dataSets.forEach((dataSet) => {
       const data = alg(dataSet);
-      console.log(dataSet, data, alg);
+
       graph.addPoint(dataSet, data);
     });
 

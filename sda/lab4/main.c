@@ -1,3 +1,4 @@
+// STRUCTURI DINAMICE DE DATE
 // Să se elaboreze un program, care va insera 25 de valori întregi aleatoare de la 0 până la 100
 // într-o listă ordonată înlănţuită.
 // Programul trebuie să calculeze suma elementelor şi media aritmetică,
@@ -71,3 +72,13 @@ int main()
 
     return 0;
 }
+
+/**
+ * In cadrul efectuarii acestei lucrari de laborator am creat o structura de date clasica din programare
+ * si anume o Lista Inlantuita, cunoscuta in engleza ca Linked List. Pentru a crea aceasta structura de date
+ * am inceput prin crearea unui Node HEAD, care are rolul de cap si reprezinta punctul de inceput al lantului.
+ * Apoi, pentru a adauga date sau noduri noi in acest lant am continuat sa adaug cate un nod nou la capat-ul lantului
+ * astfel el extindu-se tot mai mult. Pentru cazul dat, nu am considerat nevoia de a avea si o referinta la TAIL/capatul lantului.
+ * Iar pentru calcularea sumei si mediei aritmetice am parcurs lantul avand ca si conditie -> pana ce nodul curent nu este nou, iar
+ * nodul curent fiind la fiecare iterare cel viitor(next)
+*/

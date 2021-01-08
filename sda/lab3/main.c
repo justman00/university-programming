@@ -1,8 +1,5 @@
-// Să se elaboreze un program, care va insera 25 de valori întregi aleatoare de la 0 până la 100
-// într-o listă ordonată înlănţuită.
-// Programul trebuie să calculeze suma elementelor şi media aritmetică,
-//  care trebuie să fie număr cu virgulă mobilă.
 
+// SORTAREA DATELOR
 // VARIANTA 4
 #include <stdio.h>
 #include <stdlib.h>
@@ -279,7 +276,7 @@ int insertion_sort(int array[], int size)
         printf("%d  ", array[i]);
     }
 
-    printf("\nMETODA MERGE SORT:\n");
+    printf("\nMETODA INSERTION SORT:\n");
     printf("Timp de executie: \t %f secunde \n", timp_de_executie);
     printf("Numar iteratii: \t %d \n", nr_iteratii);
     printf("Numar comparatii: \t %d \n", nr_comparatii);
@@ -337,9 +334,17 @@ int main()
 
     int arr_5_copy[ARRAY_SIZE];
     memcpy(arr_5_copy, arr, sizeof(arr_5_copy));
-    selection_sort(arr_5_copy, ARRAY_SIZE);
+    insertion_sort(arr_5_copy, ARRAY_SIZE);
 
     printf("-------------------------\n");
 
     return 0;
 }
+
+/**
+ * In cadrul efectuarii acestei lucrari de laborator am urmarit ca scop principal compararea intre ei a mai multor algoritme de
+ * sortare, ele fiind: al bulelor, selection sort, quick sort, merge sort si insertion sort. Acestea sunt mai mult sau mai putin
+ * cele mai populare si cunoscute algoritme. Compararea timpului de executie, al numarului de iteratii, comparatii si permutari
+ * ne-a aratat care este totusi diferenta intre ele si care este cel mai eficient, in cazul dat fiind quicksort, care este lider
+ * dupa toate metricele colectate.
+*/

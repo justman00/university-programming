@@ -1,3 +1,4 @@
+// Modalități de transmitere a valorilor parametrilor funcției prin: valoare, adresa, (variabila globală)
 // VARIANTA 4
 #include <stdio.h>
 #include <stdlib.h>

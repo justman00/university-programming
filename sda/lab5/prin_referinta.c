@@ -1,3 +1,4 @@
+// Modalități de transmitere a valorilor parametrilor funcției prin: valoare, (adresa), variabila globală
 // VARIANTA 4
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,7 +6,6 @@
 
 // C always passes arguments by value, but the string, like other arrays,
 // is converted to a pointer to its first element, and then that pointer is passed.
-// By value.
 void afiseaza_string(char *str)
 {
     strcpy(str, "Turcan Vladimir");
@@ -23,3 +23,11 @@ int main()
 
     return 0;
 }
+
+/**
+ * In cadrul efectuarii acestei lucrari de laborator am observat si analizat diferitele modalitati de transmitere
+ * a argumentelor in alte functii. Aceste modalitati fiind: prin valoare, prin referinta(adresa) si prin intermediul unei
+ * variabile globale. Cu toate acestea, am mai invatat ca in limbajul C argumentele intotdeauna sunt oferite ca valoare,
+ * iar atunci cand sunt array-uri sau string-uri, el le transforma intr-un pointer pe primul element
+ * si apoi transmite acel pointer.
+*/

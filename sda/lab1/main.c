@@ -1,4 +1,6 @@
+// STRUCTURE DE DATE FISIERE SI INREGISTRARI
 // VARIANTA 4
+// Să se creeze fişierul student. Introduceţi în fişiere separate înregistrările referitor la studenţii cu diverse forme de studii.
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -73,3 +75,13 @@ int main()
 
     return 0;
 }
+
+/**
+ * In cadrul acestui program am invatat cum poate fi manipulat sistemul de fisiere al calculatorului
+ * cu ajutorul unor functii/comenzi predefinite din librariile standarde ale limbajului C.
+ * Cu atat mai mult, am lucrat cu structuri mai complexe de date, in cazul acesta am folosit
+ * structuri de date originale, definite prin "struct" si oferindu-le un set de proprietati.
+ * Totodata, am scris anumite date din memoria C in fisiere separate, precum si am citit din
+ * acel fisier pentru a structura datele separat dupa un anumit criteriu, in cazul problemei mele
+ * fiind forma instruirii stundetilor, exprimata prin 0 si 1, astfel obtinand 0.bin si 1.bin.
+ * */

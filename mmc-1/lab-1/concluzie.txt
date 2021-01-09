@@ -1,0 +1,4 @@
+In urma efectuarii lucrarii de laborator am acumulat cunostinte in rezolvarea numerica a ecuatillor neliniare. Pentru a ajunge la acest obiectiv am folosit
+o serie de algoritme bine cunoscute si am comparat performanta lor, observand numarul de iteratii a fiecarui dinre ele. Algoritmele puse in practica sunt:
+metoda tangentei(Newton), a secantei si a injumatatirii intervalelor. Cea a lui Newton sau a tangentei a putut obtine solutia in doar 2 iteratii ceea ce este
+un lucru extraordinar. Pentru a implementa aceste algoritme in cod am folosit limbajul C++.

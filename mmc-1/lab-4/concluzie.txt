@@ -1,0 +1,3 @@
+In cadrul acestei lucrari de laborator, am lucrat cu integrarea numerica a ecuatiilor diferentiale. In acest scop
+am implementat 2 algoritme: Euler si Runge-Kutta, care rezolvau ecuatii diferentiale. Am observat ca ambele programe
+au avut nevoie de 20 de iteratii pentru a ajunge la un rezultat. Codul programului a fost scris in Python.

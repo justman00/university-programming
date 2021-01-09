@@ -1,0 +1,3 @@
+In cadrul lucrarii nr.3 am avut ca scop interpolarea functiilor cu ajutorul polinomului Lagrance.
+Astfel, am construit un polinom care a aproximat functia data din conditie, cat si am calculat valoarea
+functiei in punctul dat in sarcina problemei. Codul programului a fost scris in C++.

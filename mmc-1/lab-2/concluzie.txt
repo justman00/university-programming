@@ -1,0 +1,5 @@
+In cadrul lucrarii de laborator nr.2 am avut drept scop rezolvarea sistemelor de ecutatii liniare.
+Astfel, am putut exersa si pune in functiune mai multe algoritme bine cunoscute de rezolvare, cum
+ar fi: Cholesky, Gauss, Gauss-Seidel si Jacobi. Am observat cum fiecare algoritm difera in modul de implementare
+si in timpul necesar de a se executa. Mai mult de atat am exersat abilitatile de programare prin limbajul Python
+si prin folosirea unei librarii "numpy"

@@ -1,84 +1,87 @@
-// STRUCTURI DINAMICE DE DATE
-// Să se elaboreze un program, care va insera 25 de valori întregi aleatoare de la 0 până la 100
-// într-o listă ordonată înlănţuită.
-// Programul trebuie să calculeze suma elementelor şi media aritmetică,
-//  care trebuie să fie număr cu virgulă mobilă.
-
+// STRUCTURE DE DATE FISIERE SI INREGISTRARI
 // VARIANTA 4
+// Să se creeze fişierul student. Introduceţi în fişiere separate înregistrările referitor la studenţii cu diverse forme de studii.
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
-struct Node
+struct examen
 {
-    int data;
-    struct Node *next;
+    char denumireaDisciplinei[10];
+    char nota;
 };
 
-void printList(struct Node *n)
+struct student
 {
-    while (n != NULL)
+    char npp[40];
+    char numarulSeriei;
+    char numarulGrupei;
+    char formaInstruirii; // 0 pt frecventa si 1 pentru frecv redusa
+    struct examen reusita[10][5];
+    struct examen ex;
+};
+
+struct student studenti[2] = {
+    {.npp = "12345678901234567890",
+     .numarulSeriei = '1',
+     .numarulGrupei = '3',
+     .formaInstruirii = '0', // la frecventa
+     .reusita = {},
+     .ex = {
+         .denumireaDisciplinei = "Disc 1",
+         .nota = '8'}},
+    {.npp = "98765432101234567890", .numarulSeriei = '3', .numarulGrupei = '1',
+     .formaInstruirii = '1', // la frecventa
+     .reusita = {},
+     .ex = {.denumireaDisciplinei = "Disc 1", .nota = '5'}}};
+
+void populate_file_with_data()
+{
+    FILE *fptr = fopen("./date.bin", "wb");
+
+    for (int n = 0; n < 2; ++n)
     {
-        printf(" %d ", n->data);
-        n = n->next;
+        struct student std = studenti[n];
+
+        fwrite(&std, sizeof(struct student), 1, fptr);
     }
-    printf("\n");
+    fclose(fptr);
 }
 
 int main()
 {
-    struct Node *head;
-    head = (struct Node *)malloc(sizeof(struct Node));
-    time_t t;
+    populate_file_with_data();
 
-    int lower = 0, upper = 100, count = 25;
-    srand((unsigned)time(&t)); //current time as seed of random number generators
+    struct student std;
+    char fileEnding[4] = "bin";
 
-    struct Node *currNode = head;
+    FILE *fptr;
 
-    // construim lista
-    for (int i = 0; i < count; i++)
+    for (int n = 0; n < 2; ++n)
     {
-        int rand_num = (rand() % (upper + 1));
+        // parcurgem prin fiecare fiecare student
+        struct student std = studenti[n];
+        char fileName = std.formaInstruirii;
+        char path[64];
+        // creem denumirea de file care o sa fie in conformitate cu forma lor de instruire
+        snprintf(path, sizeof(path), "./%C.%s", fileName, fileEnding);
+        printf("Acest este npp unui student %s\n", std.npp);
+        printf("acesta este file-ul in care va fi scris studentul %s\n", path);
 
-        if (i == 0)
-        {
-            currNode->data = rand_num;
-        }
-        else
-        {
-            struct Node *nextNode;
-            nextNode = (struct Node *)malloc(sizeof(struct Node));
-
-            nextNode->data = rand_num;
-            currNode->next = nextNode;
-            currNode = nextNode;
-        }
+        // deschidem acel file pentru a adauga, daca file-ul nu exista se va crea
+        fptr = fopen(path, "ab");
+        // scriem direct in file
+        fwrite(&std, sizeof(struct student), 1, fptr);
     }
-
-    printList(head);
-
-    int sum = 0;
-    currNode = head;
-
-    while (currNode != NULL)
-    {
-        sum += currNode->data;
-        currNode = currNode->next;
-    }
-
-    float media_aritmetica = (float)sum / count;
-    printf("Suma numerelor din linked list este %d, iar media lor aritmetica %f\n", sum, media_aritmetica);
 
     return 0;
 }
 
 /**
- * In cadrul efectuarii acestei lucrari de laborator am creat o structura de date clasica din programare
- * si anume o Lista Inlantuita, cunoscuta in engleza ca Linked List. Pentru a crea aceasta structura de date
- * am inceput prin crearea unui Node HEAD, care are rolul de cap si reprezinta punctul de inceput al lantului.
- * Apoi, pentru a adauga date sau noduri noi in acest lant am continuat sa adaug cate un nod nou la capat-ul lantului
- * astfel el extindu-se tot mai mult. Pentru cazul dat, nu am considerat nevoia de a avea si o referinta la TAIL/capatul lantului.
- * Iar pentru calcularea sumei si mediei aritmetice am parcurs lantul avand ca si conditie -> pana ce nodul curent nu este nou, iar
- * nodul curent fiind la fiecare iterare cel viitor(next)
-*/
+ * In cadrul acestui program am invatat cum poate fi manipulat sistemul de fisiere al calculatorului
+ * cu ajutorul unor functii/comenzi predefinite din librariile standarde ale limbajului C.
+ * Cu atat mai mult, am lucrat cu structuri mai complexe de date, in cazul acesta am folosit
+ * structuri de date originale, definite prin "struct" si oferindu-le un set de proprietati.
+ * Totodata, am scris anumite date din memoria C in fisiere separate, precum si am citit din
+ * acel fisier pentru a structura datele separat dupa un anumit criteriu, in cazul problemei mele
+ * fiind forma instruirii stundetilor, exprimata prin 0 si 1, astfel obtinand 0.bin si 1.bin.
+ * */

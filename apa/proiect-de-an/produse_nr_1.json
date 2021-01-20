@@ -1,0 +1,44 @@
+[
+  {
+    "denumirea": "Unt",
+    "id": 1,
+    "pret": 12,
+    "cantitatea": "1",
+    "categoria": {
+      "denumirea": "Lactate",
+      "id": "1"
+    },
+    "producator": {
+      "id": "1",
+      "denumirea": "JLC"
+    }
+  },
+  {
+    "denumirea": "Lapte",
+    "id": 2,
+    "pret": 15,
+    "cantitatea": "1",
+    "categoria": {
+      "denumirea": "Lactate",
+      "id": "1"
+    },
+    "producator": {
+      "id": "1",
+      "denumirea": "JLC"
+    }
+  },
+  {
+    "denumirea": "Orez",
+    "id": 3,
+    "pret": 35,
+    "cantitatea": "1",
+    "categoria": {
+      "denumirea": "Cereale",
+      "id": "2"
+    },
+    "producator": {
+      "id": "2",
+      "denumirea": "Iarmarka"
+    }
+  }
+]

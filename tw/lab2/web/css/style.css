@@ -1,4 +1,261 @@
-h1 {
-  color: red;
-  font-size: 80px;
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/*
+  End of CSS reset
+*/
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+}
+
+.nav-list {
+  background: darkorange;
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.nav-item {
+  color: #fff;
+  background: darkorange;
+  display: block;
+  float: left;
+  padding: 1rem;
+  position: relative;
+  text-decoration: none;
+  transition-duration: 0.5s;
+}
+
+.nav-item a {
+  color: #fff;
+}
+
+.nav-item:hover,
+.nav-item:focus-within {
+  background: red;
+  cursor: pointer;
+}
+
+.nav-item:focus-within a {
+  outline: none;
+}
+
+.nav-item ul {
+  z-index: 10;
+  background: orange;
+  visibility: hidden;
+  opacity: 0;
+  min-width: 5rem;
+  position: absolute;
+  transition: all 0.5s ease;
+  margin-top: 1rem;
+  left: 0;
+  display: none;
+}
+
+.nav-item:hover > ul,
+.nav-item:focus-within > ul,
+.nav-item ul:hover,
+.nav-item ul:focus {
+  visibility: visible;
+  opacity: 1;
+  display: block;
+}
+
+.nav-item ul .nav-item {
+  clear: both;
+  width: 100%;
+}
+
+.hero-img {
+  position: relative;
+  min-height: calc(100vh - 3rem);
+  background-color: black;
+  background-image: url('https://images.unsplash.com/photo-1615092296061-e2ccfeb2f3d6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218MHx8fHx8fHx8MTYzMzk1ODg5Mg&ixlib=rb-1.2.1&q=80&w=1440');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.img-content {
+  position: absolute;
+  top: 35%;
+  left: 50px;
+  color: white;
+}
+
+.img-content h1 {
+  font-size: 52px;
+}
+
+.img-content p {
+  padding-top: 24px;
+  font-size: 18px;
+}
+
+.contact-form {
+  padding-top: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-form h1 {
+  font-size: 48px;
+  text-align: center;
+}
+
+.contact-form label {
+	margin-top: 18px;
+}
+.contact-form input {
+  border: 2px solid #daddec;
+  margin: 5px 0 10px;
+  font-size: 1rem;
+  color: #656880;
+  width: 100%;
+}
+
+.contact-form form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }

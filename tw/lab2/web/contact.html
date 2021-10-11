@@ -1,9 +1,3 @@
-<!-- a) se alege un subiect pentru a dezvolta un site;
-b) se face descriereaa succinta a acestuia;
-c) se creaza modelul functional al site-ului;
-d) se creaza paginile informative statice utilizind HTML/CSS (acestea trebuie sa contina meniuri
-derulante, blocuri dinamice, formulare, s.a.). Trebuie separat explicit contentul HTML de CSS.  -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -33,12 +27,19 @@ derulante, blocuri dinamice, formulare, s.a.). Trebuie separat explicit contentu
         </nav>
       </header>
       <main>
-        <section class="hero-img">
-          <div class="img-content"><h1>Nu sta, salveaza planeta!</h1>
-            <p>
-              Ia actiuni acum! Alta solutie nu e.
-            </p>
-          </div>
+        <section class="contact-form">
+          <h1>Alatura-te echipei care salveaza planeta</h1>
+          <form action="#">
+            <label>
+                Nume
+                <input name="nume" type="text" />
+            </label>
+            <label>
+                Email
+                <input name="email" type="email" />
+            </label>
+            <input type="submit" />
+          </form>
         </section>
       </main>
     </div>

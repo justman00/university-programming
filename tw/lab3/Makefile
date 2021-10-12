@@ -1,3 +1,3 @@
 .PHONY: generate-css ## Generate CSS file
 generate-css:
-	npx tailwindcss -o tailwind.css --watch
+	npx tailwindcss --jit --purge index.html -o tailwind.css --watch

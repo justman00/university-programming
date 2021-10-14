@@ -15,6 +15,22 @@ c) utilizati sesiuni pentru pastrarea datelor de authenificare pentru paginile u
 functionalitati privilegiate
 d) exersati citirea/scrierea in fisiere prin implementarea unor exemple, chiar daca in logica siteului nu e nevoie. -->
 
+
+<!-- 
+migraton:
+    
+drop table if exists `users`;
+create table `users` (
+    id int not null auto_increment,
+    username text not null,
+    password text not null,
+    primary key (id)
+);
+insert into `users` (username, password) values
+    ("admin","password"),
+    ("Alice","this is my password"),
+    ("Job","12345678"); -->
+
 <body>
     <?php
     function connectDB()
@@ -54,9 +70,13 @@ d) exersati citirea/scrierea in fisiere prin implementarea unor exemple, chiar d
         echo "<br>";
     }
 
+    file_put_contents('/visits.txt', sprintf("%s visited on the %s", $_SERVER['REMOTE_ADDR'], $_SERVER['REQUEST_TIME']));
+    $file_contents = file_get_contents('/visits.txt');
+
+
+    echo $file_contents;
+
     ?>
 </body>
-
-</html>
 
 </html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <h1>Modifica un produs</h1>
+      <form id="form">
+        <label>
+          Name
+          <input type="text" name="name" />
+        </label>
+        <label>
+          Description
+          <input type="text" name="description" />
+        </label>
+        <label>
+          Price
+          <input type="number" name="price" />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const form = document.querySelector('#form');
+      const nameInput = document.querySelector('input[name="name"]');
+      const descriptionInput = document.querySelector(
+        'input[name="description"]'
+      );
+      const priceInput = document.querySelector('input[name="price"]');
+
+      let currentProduct = null;
+
+      fetch(`/api/product/read_one.php?id=${params.get('id')}`)
+        .then((res) => res.json())
+        .then((data) => {
+          nameInput.value = data.name;
+          descriptionInput.value = data.description;
+          priceInput.value = data.price;
+
+          currentProduct = data;
+        })
+        .catch(console.error);
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        if (!currentProduct) {
+          throw new Error("Couldn't find product");
+        }
+
+        const data = {
+          ...currentProduct,
+          name: nameInput.value,
+          description: descriptionInput.value,
+          price: priceInput.value,
+        };
+
+        fetch(`/api/product/update.php`, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((res) => {
+            window.location.href = '/';
+          })
+          .catch(console.error);
+      });
+    </script>
+  </body>
+</html>

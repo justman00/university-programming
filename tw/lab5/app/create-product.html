@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <h1>Creati un produs</h1>
+      <form id="form">
+        <label>
+          Name
+          <input type="text" name="name" />
+        </label>
+        <label>
+          Description
+          <input type="text" name="description" />
+        </label>
+        <label>
+          Price
+          <input type="number" name="price" />
+        </label>
+        <label>
+          Category
+          <select name="category_id">
+            <option value="1">Fashion</option>
+            <option value="2">Electronics</option>
+            <option value="3">Motors</option>
+            <option value="5">Movies</option>
+            <option value="6">Books</option>
+            <option value="13">Sports</option>
+          </select>
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <script>
+      const form = document.querySelector('#form');
+
+      const categoryNames = {
+        1: 'Fashion',
+        2: 'Electronics',
+        3: 'Motors',
+        5: 'Movies',
+        6: 'Books',
+        13: 'Sports',
+      };
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        data['category_name'] = categoryNames[data.category_id];
+
+        fetch('/api/product/create.php', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((res) => {
+            window.location.href = '/';
+          })
+          .catch(console.error);
+      });
+    </script>
+  </body>
+</html>

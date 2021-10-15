@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <h1>Lista de produse</h1>
+      <div>
+          <a href="create-product.html">Adauga un produs nou</a>
+      </div>
+      <ul class="product-list"></ul>
+    </div>
+    <script>
+      const list = document.querySelector('.product-list');
+
+      fetch('/api/product/read.php')
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data.records);
+          data.records.map((product) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <strong>${product.name} - ${product.price} lei; </strong> 
+                <a href="/update-product.html?id=${product.id}">Modifica</a> | 
+                <a href="/delete-product.html?id=${product.id}">Sterge</a>
+            `;
+            list.appendChild(li);
+          });
+        })
+        .catch(console.error);
+    </script>
+  </body>
+</html>

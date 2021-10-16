@@ -1,3 +1,8 @@
+<?php
+include "sesiune.php";
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,6 +37,21 @@ insert into `users` (username, password) values
     ("Job","12345678"); -->
 
 <body>
+    <h1>Bine ai venit pe platforma de administrare a utilizatorilor</h1>
+
+    <div>
+        <a href="create-user.html">Adauga un utilizator nou</a>
+    </div>
+
+    <h3>List curenta de utilizatori</h3>
+    <div>
+        Pentru a modifica parola unui utilizator urmeaza:
+        <a href="edit-user-password.html">editeaza parola</a>
+    </div>
+    <div>
+        Pentru a sterge un utilizator urmeaza:
+        <a href="delete-user.html">sterge utilizator</a>
+    </div>
     <?php
     function connectDB()
     {
@@ -70,11 +90,23 @@ insert into `users` (username, password) values
         echo "<br>";
     }
 
-    file_put_contents('/visits.txt', sprintf("%s visited on the %s", $_SERVER['REMOTE_ADDR'], $_SERVER['REQUEST_TIME']));
-    $file_contents = file_get_contents('/visits.txt');
+    file_put_contents('visits.txt', sprintf("%s visited on the %s\n", $_SERVER['REMOTE_ADDR'], $_SERVER['REQUEST_TIME']), FILE_APPEND);
+    $file_contents = file_get_contents('visits.txt');
 
+    echo "<h2>Lista de accesari a acestei pagini</h2>";
+    echo "<ul>";
 
-    echo $file_contents;
+    $visits_arr = explode("\n", $file_contents);
+
+    foreach($visits_arr as $visit) {
+        if (!$visit) {
+            continue;
+        }
+
+        echo "<li>" . $visit . "</li>";
+    }
+
+    echo "</ul>";
 
     ?>
 </body>

@@ -31,6 +31,7 @@ func main() {
 
 	w := newWorker()
 	go w.work(db, q)
+	log.Println("The worker has been initialized")
 
 	err := e.Start(fmt.Sprintf(":%s", portOrDefault()))
 	e.Logger.Fatal(err)

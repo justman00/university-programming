@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     wndclass.hInstance = hInstance;
     wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    wndclass.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(0, 128, 0)); // verde
     wndclass.lpszMenuName = NULL;
     wndclass.lpszClassName = szAppName;
     wndclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
@@ -54,8 +54,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         hdc = BeginPaint(hwnd, &ps);
         GetClientRect(hwnd, &rect);
-        DrawText(hdc, "Hello, Windows 95! ", -1, &rect,
-                 DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+        DrawText(hdc, "Hello, Vlad! Welcome to Lab 1! ", -1, &rect,
+                 DT_TOP | DT_CENTER | DT_VCENTER);
         EndPaint(hwnd, &ps);
         return 0;
     case WM_DESTROY:

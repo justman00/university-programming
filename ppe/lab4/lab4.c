@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <windowsx.h>
 #include <wchar.h>
 #include <stdlib.h>
 #include <math.h>
@@ -67,17 +68,12 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
         GetClientRect(hwnd, &rc);
-        // centreaza totul
-        OffsetRect(&rcCurrent, rc.right / 2, rc.bottom / 2);
 
         hdc = GetDC(hwnd);
 
         // seteaza orientarea
         SetViewportOrgEx(hdc, rcCurrent.left, rcCurrent.top, NULL);
         SetROP2(hdc, R2_NOT);
-
-        // incepe timer-ul care o sa genereze un loop.
-        SetTimer(hwnd, idTimer = 1, 10, NULL);
 
         return 0L;
 
@@ -86,42 +82,21 @@ LRESULT WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         KillTimer(hwnd, 1);
         return 0L;
 
-    case WM_TIMER:
-        if (fVisibleEllipse)
-        {
-            Ellipse(hdc, 200, 200, 50, 50);
-        }
 
-        // Bounce the star off a side if necessary.
-        GetClientRect(hwnd, &rc);
+    case WM_LBUTTONDOWN:
+    {
+        // incepe timer-ul care o sa genereze un loop.
+        int xParam = GET_X_LPARAM(lParam);
+        int yParam = GET_Y_LPARAM(lParam);
+        Rectangle(hdc, xParam, yParam, xParam + 10, yParam + 10);
 
-        if (i % 20 == 0)
-        {
-            XEllipse = XEllipse + 1;
-            YEllipse = YEllipse - 1;
-        }
-
-        OffsetRect(&rcCurrent, XEllipse, YEllipse);
-        SetViewportOrgEx(hdc, rcCurrent.left, rcCurrent.top, NULL);
-        fVisibleEllipse = Ellipse(hdc, 200, 200, 50, 50);
-
-        i++;
+        SetColorAdjustment(hdc, WHITE_BRUSH);
 
         return 0L;
+    }
 
     case WM_PAINT:
         BeginPaint(hwnd, &ps);
-        RoundRect(hdc, -250, 250, 50, 120, 50, 50); // 0 for angle
-
-        if (!fVisible)
-        {
-            fVisible = Rectangle(hdc, 100, 100, 10, 10);
-        }
-
-        if (!fVisibleEllipse)
-        {
-            fVisibleEllipse = Ellipse(hdc, 200, 200, 50, 50);
-        }
 
         EndPaint(hwnd, &ps);
         return 0L;

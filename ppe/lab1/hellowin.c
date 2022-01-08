@@ -16,7 +16,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     wndclass.hInstance = hInstance;
     wndclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     wndclass.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wndclass.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(0, 128, 0)); // verde
+    wndclass.hbrBackground = (HBRUSH)CreateSolidBrush(RGB(128, 0, 0)); // verde
     wndclass.lpszMenuName = NULL;
     wndclass.lpszClassName = szAppName;
     wndclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);

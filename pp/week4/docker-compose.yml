@@ -1,20 +1,23 @@
-version: '3.8'
+version: "3.8"
 services:
   db:
     image: postgres:12.3-alpine
     ports:
-      - 5432:5432
+      - 1234:5432
     environment:
       POSTGRES_PASSWORD: postgres
   broker:
     image: rabbitmq:3-management-alpine
     container_name: broker
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
     ports:
       - 5672:5672
       - 15672:15672
     restart: always
-    networks: 
+    networks:
       - dev-network
-networks: 
+networks:
   dev-network:
     driver: bridge

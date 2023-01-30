@@ -13,6 +13,11 @@ import (
 // citirea din el
 
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in main", r)
+		}
+	}()
 	log.Println("starting project")
 
 	db := newDB()

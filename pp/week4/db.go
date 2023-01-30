@@ -51,7 +51,7 @@ func newConnStr() string {
 
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s connect_timeout=%d sslmode=disable",
 		"localhost",
-		5432,
+		1234,
 		"postgres",
 		"postgres",
 		1000,

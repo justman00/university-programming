@@ -82,5 +82,5 @@ func connStringOrDefault() string {
 		return connString
 	}
 
-	return "amqp://guest:guest@localhost:5672/"
+	return "amqp://user:password@localhost:5672/"
 }

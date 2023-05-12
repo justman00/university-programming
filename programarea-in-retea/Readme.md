@@ -24,4 +24,5 @@ Cat despre client, el instantiaza o conexiune la server utilizand protocolul Web
 
 ## Demo
 
-[Demo Video](./demo.mov)
+https://github.com/justman00/university-programming/assets/36477870/80952f2a-0498-4b76-9b23-ec183c787045
+

@@ -24,4 +24,4 @@ Cat despre client, el instantiaza o conexiune la server utilizand protocolul Web
 
 ## Demo
 
-[Demo Video](./assets/demo.mov)
+[Demo Video](./demo.mov)

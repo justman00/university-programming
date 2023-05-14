@@ -1,0 +1,33 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: ./ # path to your Go application directory
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/go/src/app # mount your app directory into the container
+    ports:
+      - 8080:8080 # expose port 8080 of your Go app
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=vlad
+      - DB_PASSWORD=test
+      - DB_NAME=tableservice
+
+  db:
+    image: postgres:12.7 # use the version you prefer
+    ports:
+      - 5432:5432 # expose port 5432 of PostgreSQL
+    volumes:
+      - db_data:/var/lib/postgresql/data # persist PostgreSQL data
+    environment:
+      - POSTGRES_USER=vlad
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=tableservice
+
+volumes:
+  db_data:

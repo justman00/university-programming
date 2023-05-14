@@ -20,6 +20,11 @@ services:
 
   db:
     image: postgres:12.7 # use the version you prefer
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     ports:
       - 5432:5432 # expose port 5432 of PostgreSQL
     volumes:

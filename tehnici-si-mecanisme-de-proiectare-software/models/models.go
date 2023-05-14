@@ -22,6 +22,7 @@ type Client struct  {
 	Location string
 	WorkingHours string
 	TimePerTable int
+	Tables int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -48,7 +49,7 @@ func (c *ClientModels) Create(client Client) error {
 	}
 
 	query := `
-		INSERT INTO clients (id, name, email, slug, location, working_hours, time_per_table) VALUES ($1, $2, $3, $4, $5, $6, $7);
+		INSERT INTO clients (id, name, email, slug, tables, location, working_hours, time_per_table) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
 	`
 	_, err = c.DB.Exec(
 		query, 
@@ -56,6 +57,7 @@ func (c *ClientModels) Create(client Client) error {
 		client.Name, 
 		client.Email, 
 		createSlug(client.Name), 
+		client.Tables,
 		client.Location, 
 		workingHoursJSON, 
 		client.TimePerTable,
@@ -92,4 +94,49 @@ type Booking struct {
 	EndTime time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+func (b *BookingModels) Create(booking Booking) error {
+	if booking.ID == "" {
+		booking.ID = uuid.New().String()
+	}
+
+	query := `
+		INSERT INTO bookings (id, client_id, start_time, end_time) VALUES ($1, $2, $3, $4);
+	`
+	_, err := b.DB.Exec(
+		query,
+		booking.ID,
+		booking.ClientID,
+		booking.StartTime,
+		booking.EndTime,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to create booking: %w", err)
+	}
+
+	return nil
+}
+
+func (b *BookingModels) GetByClientID(clientID string, date time.Time) ([]Booking, error) {
+	query := `
+		SELECT id, client_id, start_time, end_time, created_at, updated_at FROM bookings WHERE client_id = $1 AND start_time::date = $2::date;
+	`
+	rows, err := b.DB.Query(query, clientID, date)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get bookings: %w", err)
+	}
+	defer rows.Close()
+
+	var bookings []Booking
+	for rows.Next() {
+		var booking Booking
+		if err := rows.Scan(&booking.ID, &booking.ClientID, &booking.StartTime, &booking.EndTime, &booking.CreatedAt, &booking.UpdatedAt); err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+
+		bookings = append(bookings, booking)
+	}
+
+	return bookings, nil
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -30,10 +31,13 @@ func main() {
 	)
 
 	clientModels := &models.ClientModels{dbInstance.DB}
-	handlersCollections := handlers.NewHandler(clientModels)
+	bookingModels := &models.BookingModels{dbInstance.DB}
+	handlersCollections := handlers.NewHandler(clientModels, bookingModels)
 
 	router.GET("/", indexHandler)
 	router.POST("/clients", handlersCollections.CreateClient)
+	router.POST("/bookings", handlersCollections.CreateReservation)
+	router.GET("/bookings", handlersCollections.GetReservations)
 
 	if err := http.ListenAndServe(":8080", router); err != nil {
 		log.Fatal(err)
@@ -52,7 +56,7 @@ func errorHandler(next bunrouter.HandlerFunc) bunrouter.HandlerFunc {
 		err := next(w, req)
 
 		if err != nil {
-			// Handle the error here.
+			fmt.Println(fmt.Printf("Error: %v", err))
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 

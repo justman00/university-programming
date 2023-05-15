@@ -17,12 +17,10 @@ client sa aiba un nume de utilizator, este posibil de transmis acest nume ca arg
 
 ## Modul de lucru
 
-Aplicatia server porneste un HTTP server care poate primi conexiuni dupa protocolul HTTP cat si WebSocket, intrucat noi suntem interesati in cel din urma, ne vom axa doar pe el. El accepta doar conexiuni websocket directe, fara un browser la mijloc,
-pentru simplitate. O data ce o conexiune este primita, Handshake-ul se executa automat cu clientul. La fiecare conexiune, in memorie se salveaza client-ul ca ulterior sa putem face broadcast la mesajele venite.
+Aplicatia server porneste un server TCP. El accepta doar conexiuni TCP directe, fara un browser la mijloc, pentru simplitate. O data ce o conexiune este primita, noi acceptam manual conexiunea astfel facand `Handshake`-ul. La fiecare conexiune, in memorie se salveaza client-ul ca ulterior sa putem face broadcast la mesajele venite.
 
-Cat despre client, el instantiaza o conexiune la server utilizand protocolul WebSocket, prin **ws://** si transmite mesaje atunci cand un text este scris in terminal, precum si afiseaza orice text ce este transmis din partea server-ului.
+Cat despre client, el instantiaza o conexiune la server utilizand TCP, astfel, el transmite spre server datele care sunt scrise in terminal de catre utilizator precum si afiseaza orice text ce este transmis din partea server-ului.
 
 ## Demo
 
 https://github.com/justman00/university-programming/assets/36477870/80952f2a-0498-4b76-9b23-ec183c787045
-

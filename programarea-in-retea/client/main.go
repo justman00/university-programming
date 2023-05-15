@@ -2,14 +2,15 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"strings"
 
 	"github.com/google/uuid"
-	"golang.org/x/net/websocket"
 )
 
 const (
@@ -20,18 +21,11 @@ const (
 
 func main() {
 	username := os.Args[1]
-	config, err := websocket.NewConfig(fmt.Sprintf("ws://:%v/", 1234), "http://")
-	config.Header.Set("Username", username)
+	c, err := net.Dial("tcp", "localhost:1234")
 	if err != nil {
-		log.Fatal(err)
-	}
-	connection, err := websocket.DialConfig(config)
-	if err != nil {
-		fmt.Println("Failed to establish connection")
 		log.Fatal(err)
 	}
 
-	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Welcome to your messages ", username)
 	fmt.Println("---------------------")
 
@@ -39,43 +33,55 @@ func main() {
 
 	go func() {
 		for {
+			reader := bufio.NewReader(os.Stdin)
 			text, _ := reader.ReadString('\n')
-			// convert CRLF to LF
 			text = strings.Replace(text, "\n", "", -1)
-			
+
 			msg := message{
 				Message: text,
-				ID: uuid.New().String(),
+				ID:      uuid.New().String(),
 			}
-			err = websocket.JSON.Send(connection, msg)
+
+			marshalledMsg, err := json.Marshal(msg)
 			if err != nil {
-				fmt.Println("Failed to send message")
+				fmt.Println("marshal message")
 				log.Fatal(err)
 			}
+			fmt.Fprintf(c, string(marshalledMsg)+"\n")
+
 			lastMSG = &msg
 		}
 	}()
 
 	go func() {
 		for {
-			var response message
-			err = websocket.JSON.Receive(connection, &response)
+			m, err := bufio.NewReader(c).ReadString('\n')
 			if err != nil {
+				fmt.Println("read message")
 				log.Fatal(err)
 			}
-			if lastMSG != nil && lastMSG.ID == response.ID {
+			
+			var msg message
+			err = json.Unmarshal([]byte(m), &msg)
+			if err != nil {
+				fmt.Println("unmarshal message", string(m))
+				log.Fatal(err)
+			}
+			
+			if lastMSG != nil && lastMSG.ID == msg.ID {
 				continue
 			} else {
-				fmt.Println(response.Message)
+				fmt.Println(msg.Message)
 			}
+
 		}
 	}()
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, os.Interrupt)
 	for {
 		select {
-		case <-c:
+		case <-ch:
 			fmt.Println("Exiting")
 			os.Exit(1)
 		}
@@ -84,5 +90,5 @@ func main() {
 
 type message struct {
 	Message string `json:"message"`
-	ID	  string `json:"id"`
+	ID      string `json:"id"`
 }

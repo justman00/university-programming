@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/messaging"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/models"
 	"github.com/uptrace/bunrouter"
 )
@@ -14,12 +15,14 @@ import (
 type handler struct {
 	clientModels  *models.ClientModels
 	bookingModels *models.BookingModels
+	sender        messaging.Sender
 }
 
-func NewHandler(clientModels *models.ClientModels, bookingModels *models.BookingModels) *handler {
+func NewHandler(clientModels *models.ClientModels, bookingModels *models.BookingModels, sender messaging.Sender) *handler {
 	return &handler{
 		clientModels:  clientModels,
 		bookingModels: bookingModels,
+		sender:        sender,
 	}
 }
 
@@ -108,6 +111,13 @@ func (h *handler) CreateReservation(w http.ResponseWriter, req bunrouter.Request
 	}); err != nil {
 		return fmt.Errorf("failed to create reservation: %w", err)
 	}
+
+	go func() {
+		err := h.sender.Send(client.Email, fmt.Sprintf("Reservation created for table with id %v and of type: %v", createReservationRequest.TableNumber, createReservationRequest.TableType))
+		if err != nil {
+			fmt.Println(fmt.Errorf("failed to send communication to client %v: %w", client.ID, err))
+		}
+	}()
 
 	// TODO:
 	// get available tables

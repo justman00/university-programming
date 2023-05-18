@@ -8,6 +8,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/db"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/handlers"
+	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/messaging"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/models"
 	_ "github.com/lib/pq"
 	"github.com/uptrace/bunrouter"
@@ -32,7 +33,13 @@ func main() {
 
 	clientModels := &models.ClientModels{dbInstance.DB}
 	bookingModels := &models.BookingModels{dbInstance.DB}
-	handlersCollections := handlers.NewHandler(clientModels, bookingModels)
+
+	sender, err := messaging.NewSender("email")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	handlersCollections := handlers.NewHandler(clientModels, bookingModels, sender)
 
 	router.GET("/", indexHandler)
 	router.POST("/clients", handlersCollections.CreateClient)

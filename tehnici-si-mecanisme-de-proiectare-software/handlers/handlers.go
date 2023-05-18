@@ -12,24 +12,25 @@ import (
 )
 
 type handler struct {
-	clientModels *models.ClientModels
+	clientModels  *models.ClientModels
 	bookingModels *models.BookingModels
 }
 
 func NewHandler(clientModels *models.ClientModels, bookingModels *models.BookingModels) *handler {
 	return &handler{
-		clientModels: clientModels,
+		clientModels:  clientModels,
 		bookingModels: bookingModels,
 	}
 }
 
 type CreateClientRequest struct {
-	Name string `json:"name"`
-	Email string `json:"email"`
-	Location string `json:"location"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	Location     string `json:"location"`
 	WorkingHours string `json:"working_hours"`
-	TimePerTable int `json:"time_per_table"` // in minutes
-	Tables int `json:"tables"`
+	TimePerTable int    `json:"time_per_table"` // in minutes
+	Tables       int    `json:"tables"`
+	Type         string `json:"type"`
 }
 
 func (h *handler) CreateClient(w http.ResponseWriter, req bunrouter.Request) error {
@@ -42,26 +43,30 @@ func (h *handler) CreateClient(w http.ResponseWriter, req bunrouter.Request) err
 	if err := json.Unmarshal(b, &createClientRequest); err != nil {
 		return fmt.Errorf("failed to unmarshal request body: %w", err)
 	}
-	
+
 	if err := h.clientModels.Create(models.Client{
-		Name: createClientRequest.Name,
-		Email: createClientRequest.Email,
-		Location: createClientRequest.Location,
+		Name:         createClientRequest.Name,
+		Email:        createClientRequest.Email,
+		Location:     createClientRequest.Location,
 		WorkingHours: createClientRequest.WorkingHours,
 		TimePerTable: createClientRequest.TimePerTable,
-		Tables: createClientRequest.Tables,
+		Tables:       createClientRequest.Tables,
+		Type:         createClientRequest.Type,
+		Slug:         models.CreateSlug(createClientRequest.Name),
 	}); err != nil {
 		return fmt.Errorf("failed to create client: %w", err)
 	}
-	
+
 	w.WriteHeader(http.StatusCreated)
 	return bunrouter.JSON(w, "Created")
 }
 
 type CreateReservationRequest struct {
-	ClientID string `json:"client_id"`
-	StartTime time.Time `json:"start_time"`
-	EndTime time.Time `json:"end_time"`
+	ClientID    string    `json:"client_id"`
+	StartTime   time.Time `json:"start_time"`
+	EndTime     time.Time `json:"end_time"`
+	TableNumber int       `json:"table_number"`
+	TableType   string    `json:"table_type"`
 }
 
 func (h *handler) CreateReservation(w http.ResponseWriter, req bunrouter.Request) error {
@@ -75,10 +80,31 @@ func (h *handler) CreateReservation(w http.ResponseWriter, req bunrouter.Request
 		return fmt.Errorf("failed to unmarshal request body: %w", err)
 	}
 
+	// get client
+	client, err := h.clientModels.GetByID(createReservationRequest.ClientID)
+	if err != nil {
+		return fmt.Errorf("failed to get client: %w", err)
+	}
+
+	restaurant, err := models.GetRestaurantFactory(client.Type)
+	if err != nil {
+		return fmt.Errorf("failed to get restaurant factory: %w", err)
+	}
+
+	if createReservationRequest.TableType == "square" {
+		createReservationRequest.TableType = restaurant.CreateSquareTable().GetInfo()
+	} else if createReservationRequest.TableType == "round" {
+		createReservationRequest.TableType = restaurant.CreateRoundTable().GetInfo()
+	} else {
+		return fmt.Errorf("invalid table type, only allowed round or square")
+	}
+
 	if err := h.bookingModels.Create(models.Booking{
-		ClientID: createReservationRequest.ClientID,
-		StartTime: createReservationRequest.StartTime,
-		EndTime: createReservationRequest.EndTime,
+		ClientID:    createReservationRequest.ClientID,
+		StartTime:   createReservationRequest.StartTime,
+		EndTime:     createReservationRequest.EndTime,
+		TableNumber: createReservationRequest.TableNumber,
+		TableType:   createReservationRequest.TableType,
 	}); err != nil {
 		return fmt.Errorf("failed to create reservation: %w", err)
 	}
@@ -119,7 +145,7 @@ func (h *handler) GetReservations(w http.ResponseWriter, req bunrouter.Request) 
 	if err != nil {
 		return fmt.Errorf("failed to get reservations: %w", err)
 	}
-	
+
 	w.WriteHeader(http.StatusOK)
 	return bunrouter.JSON(w, bookings)
 }

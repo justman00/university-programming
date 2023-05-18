@@ -18,14 +18,14 @@ func NewSender(kind string) (Sender, error) {
 	return nil, fmt.Errorf("invalid sender kind: %s", kind)
 }
 
-type emailSender struct {}
+type emailSender struct{}
 
 func (e *emailSender) Send(to string, message string) error {
 	fmt.Println(fmt.Sprintf("sending the following email content: %s to %s", message, to))
 	return nil
 }
 
-type smsSender struct {}
+type smsSender struct{}
 
 func (e *smsSender) Send(to string, message string) error {
 	fmt.Println(fmt.Sprintf("sending the following sms content: %s to %s", message, to))

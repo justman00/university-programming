@@ -5,6 +5,7 @@ CREATE TABLE clients (
     slug TEXT NOT NULL UNIQUE,
     location TEXT NOT NULL,
     working_hours JSONB NOT NULL,
+    Type TEXT NOT NULL,
     time_per_table INTEGER NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()

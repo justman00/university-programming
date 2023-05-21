@@ -12,6 +12,7 @@ import (
 type payment interface {
 	Create() error
 	Process() error
+	SetPaymentProcessor(paymentProcessor payments.PaymentProcessor)
 }
 
 type Service struct {
@@ -70,12 +71,25 @@ func (s *Service) CreateBooking(createReservationRequest CreateReservationReques
 		return fmt.Errorf("failed to create reservation: %w", err)
 	}
 
+	// set payment processor as liked by client
+	paypalPaymentProcessor := &payments.PayPalAdapter{PayPal: &payments.PayPal{}}
+	s.payment.SetPaymentProcessor(paypalPaymentProcessor)
+
+	if err := s.takePayment(); err != nil {
+		// if fails, retry payment
+		s.payment.SetPaymentProcessor(&payments.CreditCardProcessor{}) // usage of the bridge
+
+		if err := s.takePayment(); err != nil {
+			return fmt.Errorf("failed to take payment: %w", err)
+		}
+	}
+	
 	go s.notify(client.Email, fmt.Sprintf("Reservation created for table with id %v and of type: %v", createReservationRequest.TableNumber, createReservationRequest.TableType))
 
 	return nil
 }
 
-func (s *Service) TakePayment() error {
+func (s *Service) takePayment() error {
 	if err := s.payment.Create(); err != nil {
 		return fmt.Errorf("failed to create payment: %w", err)
 	}

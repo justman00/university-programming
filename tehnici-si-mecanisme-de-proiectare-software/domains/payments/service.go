@@ -3,15 +3,12 @@ package payments
 import "fmt"
 
 type payment struct {
-	paymentProcessors []PaymentProcessor
+	paymentProvessor PaymentProcessor // bridge
 }
 
 func NewPayment() *payment {
 	return &payment{
-		paymentProcessors: []PaymentProcessor{
-			&CreditCardProcessor{},
-			&PayPalAdapter{PayPal: &PayPal{}},
-		},
+		paymentProvessor: &CreditCardProcessor{}, // default
 	}
 }
 
@@ -21,12 +18,8 @@ func (p *payment) Create() error {
 	return nil
 }
 
-func (p *payment) Process(method string) error {
-	for _, processor := range p.paymentProcessors {
-		if processor.ID() == method {
-			processor.ProcessPayment(100)
-		}
-	}
+func (p *payment) Process() error {
+	p.paymentProvessor.ProcessPayment(0)
 
 	return nil
 }
@@ -47,4 +40,10 @@ func (p *payment) Get() error {
 	fmt.Println("payment get")
 
 	return nil
+}
+
+// Bridge is a structural design pattern that divides business logic or huge class into separate class hierarchies that can be developed independently.
+// https://refactoring.guru/design-patterns/bridge/go/example#example-0
+func (p *payment) SetPaymentProcessor(paymentProcessor PaymentProcessor) {
+	p.paymentProvessor = paymentProcessor
 }

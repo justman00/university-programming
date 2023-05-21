@@ -74,10 +74,6 @@ func (h *handler) CreateReservation(w http.ResponseWriter, req bunrouter.Request
 		return fmt.Errorf("failed to unmarshal request body: %w", err)
 	}
 
-	if err := h.bookingService.TakePayment(); err != nil {
-		return fmt.Errorf("failed to take payment: %w", err)
-	}
-
 	if err := h.bookingService.CreateBooking(createReservationRequest); err != nil {
 		return fmt.Errorf("failed to create reservation: %w", err)
 	}

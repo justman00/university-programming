@@ -22,6 +22,7 @@ func NewHandler(clientModels *models.ClientModels, bookingModels *models.Booking
 	return &handler{
 		clientModels:   clientModels,
 		bookingService: bookingService,
+		bookingModels:  bookingModels,
 	}
 }
 

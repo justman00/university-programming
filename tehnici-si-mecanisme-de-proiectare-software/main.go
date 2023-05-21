@@ -27,6 +27,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fmt.Println("app started")
+
 	router := bunrouter.New(
 		bunrouter.Use(reqlog.NewMiddleware()),
 		bunrouter.Use(errorHandler),

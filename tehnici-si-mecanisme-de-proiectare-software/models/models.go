@@ -165,7 +165,17 @@ func (b *BookingModels) GetByClientID(clientID string, date time.Time) ([]Bookin
 	var bookings []Booking
 	for rows.Next() {
 		var booking Booking
-		if err := rows.Scan(&booking.ID, &booking.ClientID, &booking.StartTime, &booking.EndTime, &booking.CreatedAt, &booking.UpdatedAt, &booking.CustomerEmail); err != nil {
+		if err := rows.Scan(
+			&booking.ID,
+			&booking.ClientID,
+			&booking.StartTime,
+			&booking.EndTime,
+			&booking.CreatedAt,
+			&booking.UpdatedAt,
+			&booking.TableNumber,
+			&booking.TableType,
+			&booking.CustomerEmail,
+		); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 
@@ -175,24 +185,42 @@ func (b *BookingModels) GetByClientID(clientID string, date time.Time) ([]Bookin
 	return bookings, nil
 }
 
-func (b *BookingModels) DeleteBookinsByCutomerEmail(customerEmail string) ([]*Booking, error) {
+func (b *BookingModels) DeleteBookinsByCutomerEmail(customerEmail string) ([]Booking, error) {
 	query := `
-		DELETE FROM bookings WHERE customer_email = $1 RETURNING id, client_id, start_time, end_time, created_at, updated_at, table_number, type, customer_email;
+		SELECT id, client_id, start_time, end_time, created_at, updated_at, table_number, type, customer_email FROM bookings WHERE customer_email = $1;
 	`
 	rows, err := b.DB.Query(query, customerEmail)
 	if err != nil {
-		return nil, fmt.Errorf("failed to delete bookings: %w", err)
+		return nil, fmt.Errorf("failed to select bookings: %w", err)
 	}
 	defer rows.Close()
 
-	var bookings []*Booking
+	var bookings []Booking
 	for rows.Next() {
-		var booking *Booking
-		if err := rows.Scan(&booking.ID, &booking.ClientID, &booking.StartTime, &booking.EndTime, &booking.CreatedAt, &booking.UpdatedAt, &booking.CustomerEmail); err != nil {
+		var booking Booking
+		if err := rows.Scan(
+			&booking.ID, 
+			&booking.ClientID, 
+			&booking.StartTime, 
+			&booking.EndTime, 
+			&booking.CreatedAt, 
+			&booking.UpdatedAt, 
+			&booking.TableNumber,
+			&booking.TableType,
+			&booking.CustomerEmail,
+		); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 
 		bookings = append(bookings, booking)
+	}
+
+	query = `
+		DELETE FROM bookings WHERE customer_email = $1;
+	`
+	_, err = b.DB.Exec(query, customerEmail)
+	if err != nil {
+		return nil, fmt.Errorf("failed to delete bookings: %w", err)
 	}
 
 	return bookings, nil

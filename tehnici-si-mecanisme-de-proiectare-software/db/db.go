@@ -27,8 +27,6 @@ func NewDB() (*DB, error) {
 		password := os.Getenv("DB_PASSWORD") // postgres
 		dbname := os.Getenv("DB_NAME")       // postgres
 
-		fmt.Println(host, port, user, password, dbname)
-
 		connString := fmt.Sprintf("host=%s port=%s user=%s "+
 			"password=%s dbname=%s sslmode=disable",
 			host, port, user, password, dbname)

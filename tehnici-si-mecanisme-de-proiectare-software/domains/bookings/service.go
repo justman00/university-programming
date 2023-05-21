@@ -86,7 +86,7 @@ func (s *Service) CreateBooking(createReservationRequest CreateReservationReques
 		}
 	}
 
-	go s.notify(client.Email, fmt.Sprintf("Reservation created for table with id %v and of type: %v", createReservationRequest.TableNumber, createReservationRequest.TableType))
+	s.notify(client.Email, fmt.Sprintf("Reservation created for table with id %v and of type: %v", createReservationRequest.TableNumber, createReservationRequest.TableType))
 
 	return nil
 }
@@ -115,7 +115,7 @@ func (s *Service) notify(to, message string) error {
 // Iterator is a behavioral design pattern that allows sequential traversal through a complex data structure without exposing its internal details.
 // https://refactoring.guru/design-patterns/iterator/go/example#example-0
 type bookingsIterator struct {
-	bookings []*models.Booking
+	bookings []models.Booking
 	index    int
 }
 
@@ -130,7 +130,7 @@ func (b *bookingsIterator) getNext() *models.Booking {
 	if b.hasNext() {
 		bookingModel := b.bookings[b.index]
 		b.index++
-		return bookingModel
+		return &bookingModel
 	}
 	return nil
 }
@@ -155,7 +155,7 @@ func (s *Service) DeleteBookings(customerEmail string) error {
 
 	// Observer is a behavioral design pattern that allows some objects to notify other objects about changes in their state.
 	// https://refactoring.guru/design-patterns/observer/go/example#example-0
-	go at.NotifyObservers()
+	at.NotifyObservers()
 
 	return nil
 }

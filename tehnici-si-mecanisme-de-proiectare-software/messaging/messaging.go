@@ -2,6 +2,8 @@ package messaging
 
 import "fmt"
 
+// Template Method is a behavioral design pattern that allows you to defines a skeleton of an algorithm in a base class and let subclasses override the steps without changing the overall algorithm’s structure.
+// https://refactoring.guru/design-patterns/template-method/go/example#example-0
 type Sender interface {
 	Send(to string, message string) error
 }

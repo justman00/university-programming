@@ -47,6 +47,7 @@ func main() {
 	router.POST("/clients", handlersCollections.CreateClient)
 	router.POST("/bookings", handlersCollections.CreateReservation)
 	router.GET("/bookings", handlersCollections.GetReservations)
+	router.DELETE("/bookings/:customer_email", handlersCollections.DeleteReservations)
 
 	if err := http.ListenAndServe(":8080", router); err != nil {
 		log.Fatal(err)

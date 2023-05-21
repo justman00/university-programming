@@ -1,0 +1,1 @@
+ALTER TABLE bookings ADD COLUMN customer_email TEXT NOT NULL;

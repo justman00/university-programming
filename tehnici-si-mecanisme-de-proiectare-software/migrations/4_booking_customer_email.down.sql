@@ -1,0 +1,1 @@
+ALTER TABLE bookins DROP COLUMN customer_email;

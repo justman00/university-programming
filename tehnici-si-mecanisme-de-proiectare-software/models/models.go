@@ -116,14 +116,15 @@ type BookingModels struct {
 }
 
 type Booking struct {
-	ID          string
-	ClientID    string
-	StartTime   time.Time
-	EndTime     time.Time
-	TableNumber int
-	TableType   string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID            string
+	ClientID      string
+	StartTime     time.Time
+	EndTime       time.Time
+	TableNumber   int
+	TableType     string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	CustomerEmail string
 }
 
 func (b *BookingModels) Create(booking Booking) error {
@@ -132,7 +133,7 @@ func (b *BookingModels) Create(booking Booking) error {
 	}
 
 	query := `
-		INSERT INTO bookings (id, client_id, start_time, end_time, table_number, type) VALUES ($1, $2, $3, $4, $5, $6);
+		INSERT INTO bookings (id, client_id, start_time, end_time, table_number, type, customer_email) VALUES ($1, $2, $3, $4, $5, $6, $7);
 	`
 	_, err := b.DB.Exec(
 		query,
@@ -142,6 +143,7 @@ func (b *BookingModels) Create(booking Booking) error {
 		booking.EndTime,
 		booking.TableNumber,
 		booking.TableType,
+		booking.CustomerEmail,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to create booking: %w", err)
@@ -152,7 +154,7 @@ func (b *BookingModels) Create(booking Booking) error {
 
 func (b *BookingModels) GetByClientID(clientID string, date time.Time) ([]Booking, error) {
 	query := `
-		SELECT id, client_id, start_time, end_time, created_at, updated_at, table_number, type FROM bookings WHERE client_id = $1 AND start_time::date = $2::date;
+		SELECT id, client_id, start_time, end_time, created_at, updated_at, table_number, type, customer_email FROM bookings WHERE client_id = $1 AND start_time::date = $2::date;
 	`
 	rows, err := b.DB.Query(query, clientID, date)
 	if err != nil {
@@ -163,7 +165,30 @@ func (b *BookingModels) GetByClientID(clientID string, date time.Time) ([]Bookin
 	var bookings []Booking
 	for rows.Next() {
 		var booking Booking
-		if err := rows.Scan(&booking.ID, &booking.ClientID, &booking.StartTime, &booking.EndTime, &booking.CreatedAt, &booking.UpdatedAt); err != nil {
+		if err := rows.Scan(&booking.ID, &booking.ClientID, &booking.StartTime, &booking.EndTime, &booking.CreatedAt, &booking.UpdatedAt, &booking.CustomerEmail); err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+
+		bookings = append(bookings, booking)
+	}
+
+	return bookings, nil
+}
+
+func (b *BookingModels) DeleteBookinsByCutomerEmail(customerEmail string) ([]*Booking, error) {
+	query := `
+		DELETE FROM bookings WHERE customer_email = $1 RETURNING id, client_id, start_time, end_time, created_at, updated_at, table_number, type, customer_email;
+	`
+	rows, err := b.DB.Query(query, customerEmail)
+	if err != nil {
+		return nil, fmt.Errorf("failed to delete bookings: %w", err)
+	}
+	defer rows.Close()
+
+	var bookings []*Booking
+	for rows.Next() {
+		var booking *Booking
+		if err := rows.Scan(&booking.ID, &booking.ClientID, &booking.StartTime, &booking.EndTime, &booking.CreatedAt, &booking.UpdatedAt, &booking.CustomerEmail); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 

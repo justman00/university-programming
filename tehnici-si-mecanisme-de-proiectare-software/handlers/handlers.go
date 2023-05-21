@@ -118,3 +118,18 @@ func (h *handler) GetReservations(w http.ResponseWriter, req bunrouter.Request) 
 	w.WriteHeader(http.StatusOK)
 	return bunrouter.JSON(w, bookings)
 }
+
+func (h *handler) DeleteReservations(w http.ResponseWriter, req bunrouter.Request) error {
+	customerEmail := req.Params().ByName("customer_email")
+	if customerEmail == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return fmt.Errorf("customer_email is required")
+	}
+
+	if err := h.bookingService.DeleteBookings(customerEmail); err != nil {
+		return fmt.Errorf("failed to delete reservations: %w", err)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	return nil
+}

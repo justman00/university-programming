@@ -2,10 +2,17 @@ package payments
 
 import "fmt"
 
-type payment struct{}
+type payment struct {
+	paymentProcessors []PaymentProcessor
+}
 
 func NewPayment() *payment {
-	return &payment{}
+	return &payment{
+		paymentProcessors: []PaymentProcessor{
+			&CreditCardProcessor{},
+			&PayPalAdapter{PayPal: &PayPal{}},
+		},
+	}
 }
 
 func (p *payment) Create() error {
@@ -14,8 +21,12 @@ func (p *payment) Create() error {
 	return nil
 }
 
-func (p *payment) Process() error {
-	fmt.Println("payment get")
+func (p *payment) Process(method string) error {
+	for _, processor := range p.paymentProcessors {
+		if processor.ID() == method {
+			processor.ProcessPayment(100)
+		}
+	}
 
 	return nil
 }

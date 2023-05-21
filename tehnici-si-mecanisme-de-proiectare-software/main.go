@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/db"
+	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/domains/bookings"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/handlers"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/messaging"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/models"
@@ -38,8 +39,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	bookingService := bookings.NewService(clientModels, bookingModels, sender)
 
-	handlersCollections := handlers.NewHandler(clientModels, bookingModels, sender)
+	handlersCollections := handlers.NewHandler(clientModels, bookingModels, bookingService)
 
 	router.GET("/", indexHandler)
 	router.POST("/clients", handlersCollections.CreateClient)

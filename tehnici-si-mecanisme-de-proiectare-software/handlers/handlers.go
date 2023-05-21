@@ -7,22 +7,21 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/messaging"
+	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/domains/bookings"
 	"github.com/justman00/tehnici-si-mecanisme-de-proiectare-software/models"
 	"github.com/uptrace/bunrouter"
 )
 
 type handler struct {
-	clientModels  *models.ClientModels
-	bookingModels *models.BookingModels
-	sender        messaging.Sender
+	clientModels   *models.ClientModels
+	bookingModels  *models.BookingModels
+	bookingService *bookings.Service
 }
 
-func NewHandler(clientModels *models.ClientModels, bookingModels *models.BookingModels, sender messaging.Sender) *handler {
+func NewHandler(clientModels *models.ClientModels, bookingModels *models.BookingModels, bookingService *bookings.Service) *handler {
 	return &handler{
-		clientModels:  clientModels,
-		bookingModels: bookingModels,
-		sender:        sender,
+		clientModels:   clientModels,
+		bookingService: bookingService,
 	}
 }
 
@@ -64,60 +63,24 @@ func (h *handler) CreateClient(w http.ResponseWriter, req bunrouter.Request) err
 	return bunrouter.JSON(w, "Created")
 }
 
-type CreateReservationRequest struct {
-	ClientID    string    `json:"client_id"`
-	StartTime   time.Time `json:"start_time"`
-	EndTime     time.Time `json:"end_time"`
-	TableNumber int       `json:"table_number"`
-	TableType   string    `json:"table_type"`
-}
-
 func (h *handler) CreateReservation(w http.ResponseWriter, req bunrouter.Request) error {
 	b, err := io.ReadAll(req.Body)
 	if err != nil {
 		return fmt.Errorf("failed to read request body: %w", err)
 	}
 
-	var createReservationRequest CreateReservationRequest
+	var createReservationRequest bookings.CreateReservationRequest
 	if err := json.Unmarshal(b, &createReservationRequest); err != nil {
 		return fmt.Errorf("failed to unmarshal request body: %w", err)
 	}
 
-	// get client
-	client, err := h.clientModels.GetByID(createReservationRequest.ClientID)
-	if err != nil {
-		return fmt.Errorf("failed to get client: %w", err)
+	if err := h.bookingService.TakePayment(); err != nil {
+		return fmt.Errorf("failed to take payment: %w", err)
 	}
 
-	restaurant, err := models.GetRestaurantFactory(client.Type)
-	if err != nil {
-		return fmt.Errorf("failed to get restaurant factory: %w", err)
-	}
-
-	if createReservationRequest.TableType == "square" {
-		createReservationRequest.TableType = restaurant.CreateSquareTable().GetInfo()
-	} else if createReservationRequest.TableType == "round" {
-		createReservationRequest.TableType = restaurant.CreateRoundTable().GetInfo()
-	} else {
-		return fmt.Errorf("invalid table type, only allowed round or square")
-	}
-
-	if err := h.bookingModels.Create(models.Booking{
-		ClientID:    createReservationRequest.ClientID,
-		StartTime:   createReservationRequest.StartTime,
-		EndTime:     createReservationRequest.EndTime,
-		TableNumber: createReservationRequest.TableNumber,
-		TableType:   createReservationRequest.TableType,
-	}); err != nil {
+	if err := h.bookingService.CreateBooking(createReservationRequest); err != nil {
 		return fmt.Errorf("failed to create reservation: %w", err)
 	}
-
-	go func() {
-		err := h.sender.Send(client.Email, fmt.Sprintf("Reservation created for table with id %v and of type: %v", createReservationRequest.TableNumber, createReservationRequest.TableType))
-		if err != nil {
-			fmt.Println(fmt.Errorf("failed to send communication to client %v: %w", client.ID, err))
-		}
-	}()
 
 	// TODO:
 	// get available tables

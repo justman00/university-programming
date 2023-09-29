@@ -1,0 +1,241 @@
+openapi: 3.0.3
+info:
+  title: your_app_name spec
+  description: your_app_name spec
+  version: 1.0.0
+servers:
+  - url: https
+paths:
+  /api/health-check:
+    get:
+      responses:
+        200:
+          description: OK
+  /api/analysis:
+    parameters:
+      - name: source
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/Source'
+        description: The source of the analysis. Defaults to trustpilot.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: The limit of reviews to be returned. Defaults at 100.
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+        description: The page of reviews to be returned. Defaults at 1.
+      - name: sentiment_analysis
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/SentimentAnalysis'
+        description: The sentiment analysis of the review.
+      - name: emotion
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/Emotion'
+        description: The emotion of the review.
+      - name: topic_classification
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/TopicClassification'
+        description: The topic classification of the review.
+      - name: rating
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/Rating'
+        description: The rating of the review.
+      - name: created_at
+        in: query
+        required: false
+        schema:
+          type: string
+        description: The date of the review.
+      
+    get:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+          description: 
+            The list of reviews.
+  /api/enrol-client:
+    post:
+      summary: Enrol a client to the service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                source:
+                  $ref: '#/components/schemas/Source'
+                client_name:
+                  type: string
+      responses:
+        '200':
+          description: Client enrolled successfully
+        '400':
+          description: Bad request - Invalid payload
+  /public/hooks/trustpilot:
+    post:
+      summary: Add events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                events:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      eventName:
+                        type: string
+                      version:
+                        type: string
+                      eventData:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          language:
+                            type: string
+                          title:
+                            type: string
+                          text:
+                            type: string
+                          referenceId:
+                            type: string
+                          stars:
+                            type: integer
+                          createdAt:
+                            type: string
+                            format: date-time
+                          isVerified:
+                            type: boolean
+                          locationId:
+                            type: string
+                          link:
+                            type: string
+                          consumer:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              name:
+                                type: string
+                              link:
+                                type: string
+                          tags:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                group:
+                                  type: string
+                                value:
+                                  type: string
+      responses:
+        '200':
+          description: Event added successfully
+        '400':
+          description: Bad request - Invalid payload
+components:
+  schemas:
+    Source:
+      type: string
+      enum:
+        - trustpilot
+        - google
+        - facebook
+        - apple
+    SentimentAnalysis:
+      type: string
+      enum:
+        - positive
+        - negative
+        - neutral
+        - mixed
+    Emotion:
+      type: string
+      enum:
+        - anger
+        - anxiety
+        - confused
+        - delight
+        - disappointed
+        - indifferent
+        - regrets
+        - safe
+        - sceptical
+        - stressed
+        - surprise
+        - trust
+    TopicClassification:
+      type: string
+      enum:
+        - solo_card_reader
+        - card_reader
+        - pos
+        - qr_code
+        - direct_integration
+        - online_store
+        - customer_service
+        - business_account
+        - sumup_pay
+        - verification
+        - accounting
+        - invoices
+        - cash_advance
+    Rating:
+      type: integer
+      minimum: 1
+      maximum: 5
+    Review:
+      type: object
+      required:
+        - id
+        - feedback
+        - source
+        - sentiment_analysis
+        - emotion
+        - topic_classification
+        - rating
+        - created_at
+      properties:
+        id:
+          type: string
+        feedback:
+          type: string
+        source:
+          $ref: '#/components/schemas/Source'
+        sentiment_analysis:
+          $ref: '#/components/schemas/SentimentAnalysis'
+        emotion:
+          $ref: '#/components/schemas/Emotion'
+        topic_classification:
+          $ref: '#/components/schemas/TopicClassification'
+        rating:
+          $ref: '#/components/schemas/Rating'
+        created_at:
+          type: string
+          
+    

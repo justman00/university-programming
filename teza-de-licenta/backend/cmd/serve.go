@@ -6,6 +6,7 @@ import (
 
 	"github.com/hibiken/asynq"
 	"github.com/hibiken/asynqmon"
+	"github.com/justman00/teza-de-licenta/internal/db"
 	"github.com/justman00/teza-de-licenta/internal/importers/trustpilot"
 	"github.com/justman00/teza-de-licenta/internal/tasks"
 	"github.com/labstack/echo/v4"
@@ -23,6 +24,11 @@ func ServeCMD() *cobra.Command {
 		Use:   "serve",
 		Short: "`serve` este comanda care porneste serverul pentru teza de licenta. Acesta include pornirea serverului pentru afisarea si procesarea datelor.",
 		Run: func(cmd *cobra.Command, args []string) {
+			_, err := db.New()
+			if err != nil {
+				logrus.Fatalf("failed to create db instance: %v", err)
+			}
+
 			workerClient := asynq.NewClient(asynq.RedisClientOpt{Addr: os.Getenv("REDIS_ADDR")})
 			defer workerClient.Close()
 

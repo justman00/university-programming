@@ -30,7 +30,7 @@ services:
     command: ./main worker
     env_file:
       - .env
-    environmen:
+    environment:
       REDIS_ADDR: redis:6379
 
   redis:

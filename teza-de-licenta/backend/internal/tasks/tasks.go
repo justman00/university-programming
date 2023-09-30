@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/hibiken/asynq"
+	"github.com/sirupsen/logrus"
 )
 
 // A list of task types.
@@ -42,7 +43,9 @@ func (processor *ReviewProcessor) ProcessTask(ctx context.Context, t *asynq.Task
 		return fmt.Errorf("unmarshal review submitted: %v: %w", err, asynq.SkipRetry)
 	}
 
-	fmt.Println("ReviewProcessor: received task:", p.Contents)
+	logrus.WithField("review", p).Info("ReviewProcessor: received task:", p.Contents)
+
+	time.Sleep(5 * time.Second)
 
 	return nil
 }

@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    image: teza-de-licenta:local
+    depends_on:
+      - redis
+
+  web:
+    container_name: myapp-web
+    image: teza-de-licenta:local
+    pull_policy: never
+    command: ./main serve
+    env_file:
+      - .env
+    environment:
+      REDIS_ADDR: redis:6379
+    ports:
+      - "8080:8080"
+    depends_on:
+      - worker
+
+  worker:
+    container_name: myapp-worker
+    image: teza-de-licenta:local
+    pull_policy: never
+    command: ./main worker
+    env_file:
+      - .env
+    environmen:
+      REDIS_ADDR: redis:6379
+
+  redis:
+    image: redis:latest
+    container_name: myapp-redis
+    ports:
+      - "6379:6379"

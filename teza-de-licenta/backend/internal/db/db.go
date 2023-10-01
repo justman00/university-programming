@@ -1,28 +1,26 @@
 package db
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq" // Import the postgres driver
 )
 
 type DB interface {
-	// Define your query methods here
+	InsertReview(ctx context.Context, review *InsertReviewParams) error
 }
 
 type dbImpl struct {
-	db *sqlx.DB
-}
-
-func (d *dbImpl) Query() error {
-	// Implement your query method here
-	return nil
+	*sqlx.DB
 }
 
 func New() (DB, error) {
@@ -58,5 +56,31 @@ func New() (DB, error) {
 		return nil, fmt.Errorf("run migrations: %w", err)
 	}
 
-	return &dbImpl{db: db}, nil
+	return &dbImpl{db}, nil
+}
+
+type InsertReviewParams struct {
+	ID              uuid.UUID `db:"id"`
+	Rating          int       `db:"rating"`
+	Source          string    `db:"source"`
+	Review          string    `db:"review"`
+	Analysis        string    `db:"analysis"`
+	OriginalPayload string    `db:"original_payload"`
+	ReviewCreatedAt time.Time `db:"review_created_at"`
+	ReviewUpdatedAt time.Time `db:"review_updated_at"`
+	CreatedAt       time.Time `db:"created_at"`
+	UpdatedAt       time.Time `db:"updated_at"`
+}
+
+func (db *dbImpl) InsertReview(ctx context.Context, review *InsertReviewParams) error {
+	query := `
+        INSERT INTO reviews (id, rating, source, review, analysis, original_payload, review_created_at, review_updated_at)
+        VALUES (:id, :rating, :source, :review, :analysis, :original_payload, :review_created_at, :review_updated_at)
+    `
+	_, err := db.NamedExec(query, review)
+	if err != nil {
+		return fmt.Errorf("insert review: %w", err)
+	}
+
+	return nil
 }

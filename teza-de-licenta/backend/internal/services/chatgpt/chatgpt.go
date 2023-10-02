@@ -30,7 +30,7 @@ func New(openaiApiKey string, openaiBaseUrl string, openaiModel string) Client {
 
 type Question struct {
 	HumanChatMessage  string
-	SystemChatMessage string
+	SystemChatMessage *string
 }
 
 type Answer struct {
@@ -53,10 +53,12 @@ func (chatgptClient *chatgptClient) Question(ctx context.Context, question *Ques
 		return nil, fmt.Errorf("openai client cannot be created: %s", err)
 	}
 
-	messages := []schema.ChatMessage{
-		schema.SystemChatMessage{Content: question.SystemChatMessage},
-		schema.HumanChatMessage{Content: question.HumanChatMessage},
+	messages := []schema.ChatMessage{}
+	if question.SystemChatMessage != nil {
+		messages = append(messages, schema.SystemChatMessage{Content: *question.SystemChatMessage})
 	}
+	messages = append(messages, schema.HumanChatMessage{Content: question.HumanChatMessage})
+
 	answer, err := chat.Call(ctx, messages, llms.WithTemperature(0.0))
 	if err != nil {
 		return nil, fmt.Errorf("call openai: %s", err)

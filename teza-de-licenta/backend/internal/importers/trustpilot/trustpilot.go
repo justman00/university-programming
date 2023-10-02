@@ -121,9 +121,9 @@ func (c *TrustpilotClient) GetReviews(ctx context.Context, businessUnitID string
 		if err != nil {
 			return nil, fmt.Errorf("decode trustpilot api response: %w", err)
 		}
-		reviews = append(reviews, response.Reviews...)
+		reviews = append(reviews, response.Reviews[0:300]...)
 		nextPageToken = response.NextPageToken
-		if nextPageToken == "" {
+		if nextPageToken == "" || true {
 			break
 		}
 	}

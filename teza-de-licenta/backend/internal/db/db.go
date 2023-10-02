@@ -17,6 +17,7 @@ import (
 
 type DB interface {
 	InsertReview(ctx context.Context, review *InsertReviewParams) error
+	GetReviews(ctx context.Context, params *GetReviewsParams) ([]*Review, error)
 }
 
 type dbImpl struct {
@@ -59,7 +60,7 @@ func New() (DB, error) {
 	return &dbImpl{db}, nil
 }
 
-type InsertReviewParams struct {
+type Review struct {
 	ID              uuid.UUID `db:"id"`
 	Rating          int       `db:"rating"`
 	Source          string    `db:"source"`
@@ -70,6 +71,17 @@ type InsertReviewParams struct {
 	ReviewUpdatedAt time.Time `db:"review_updated_at"`
 	CreatedAt       time.Time `db:"created_at"`
 	UpdatedAt       time.Time `db:"updated_at"`
+}
+
+type InsertReviewParams struct {
+	ID              uuid.UUID `db:"id"`
+	Rating          int       `db:"rating"`
+	Source          string    `db:"source"`
+	Review          string    `db:"review"`
+	Analysis        string    `db:"analysis"`
+	OriginalPayload string    `db:"original_payload"`
+	ReviewCreatedAt time.Time `db:"review_created_at"`
+	ReviewUpdatedAt time.Time `db:"review_updated_at"`
 }
 
 func (db *dbImpl) InsertReview(ctx context.Context, review *InsertReviewParams) error {
@@ -83,4 +95,31 @@ func (db *dbImpl) InsertReview(ctx context.Context, review *InsertReviewParams) 
 	}
 
 	return nil
+}
+
+type GetReviewsParams struct {
+	TopicClassification *string `db:"topic_classification"`
+	Emotion             *string `db:"emotion"`
+	Sentiment           *string `db:"sentiment"`
+	Source              *string `db:"source"`
+	Limit               int     `db:"limit"`
+}
+
+func (db *dbImpl) GetReviews(ctx context.Context, params *GetReviewsParams) ([]*Review, error) {
+	query := `
+    SELECT *
+    FROM reviews
+    LIMIT $1;
+`
+
+	// TODO: add filters
+	reviews := []*Review{}
+	err := db.SelectContext(ctx, &reviews, query,
+		params.Limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return reviews, nil
 }

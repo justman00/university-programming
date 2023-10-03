@@ -1,0 +1,1 @@
+ALTER TABLE reviews ADD COLUMN entity_id UUID REFERENCES entities(id);

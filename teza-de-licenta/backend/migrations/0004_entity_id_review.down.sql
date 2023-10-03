@@ -1,0 +1,1 @@
+ALTER TABLE reviews DROP COLUMN entity_id;

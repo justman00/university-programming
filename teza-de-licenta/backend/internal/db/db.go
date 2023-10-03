@@ -18,6 +18,7 @@ import (
 type DB interface {
 	InsertReview(ctx context.Context, review *InsertReviewParams) error
 	GetReviews(ctx context.Context, params *GetReviewsParams) ([]*Review, error)
+	CreateEntity(ctx context.Context, params *CreateEntityParams) (*Entity, error)
 }
 
 type dbImpl struct {
@@ -67,6 +68,7 @@ type Review struct {
 	Review          string    `db:"review"`
 	Analysis        string    `db:"analysis"`
 	OriginalPayload string    `db:"original_payload"`
+	EntityID        string    `db:"entity_id"`
 	ReviewCreatedAt time.Time `db:"review_created_at"`
 	ReviewUpdatedAt time.Time `db:"review_updated_at"`
 	CreatedAt       time.Time `db:"created_at"`
@@ -80,14 +82,15 @@ type InsertReviewParams struct {
 	Review          string    `db:"review"`
 	Analysis        string    `db:"analysis"`
 	OriginalPayload string    `db:"original_payload"`
+	EntityID        string    `db:"entity_id"`
 	ReviewCreatedAt time.Time `db:"review_created_at"`
 	ReviewUpdatedAt time.Time `db:"review_updated_at"`
 }
 
 func (db *dbImpl) InsertReview(ctx context.Context, review *InsertReviewParams) error {
 	query := `
-        INSERT INTO reviews (id, rating, source, review, analysis, original_payload, review_created_at, review_updated_at)
-        VALUES (:id, :rating, :source, :review, :analysis, :original_payload, :review_created_at, :review_updated_at)
+        INSERT INTO reviews (id, rating, source, review, analysis, original_payload, review_created_at, review_updated_at, entity_id)
+        VALUES (:id, :rating, :source, :review, :analysis, :original_payload, :review_created_at, :review_updated_at, :entity_id)
     `
 	_, err := db.NamedExec(query, review)
 	if err != nil {
@@ -113,10 +116,10 @@ func (db *dbImpl) GetReviews(ctx context.Context, params *GetReviewsParams) ([]*
 		AND ($2::text is NULL OR analysis->>'emotion' = $2)
 		AND ($3::text is NULL OR analysis->>'sentiment' = $3)
 		AND ($4::text is NULL OR analysis->'topic_classification' @> to_jsonb(string_to_array($4, ',')::text[]))
+	ORDER BY review_created_at DESC
 	LIMIT $5;
 	`
 
-	// TODO: add filters
 	reviews := []*Review{}
 	err := db.SelectContext(ctx, &reviews, query,
 		params.Source,
@@ -130,4 +133,44 @@ func (db *dbImpl) GetReviews(ctx context.Context, params *GetReviewsParams) ([]*
 	}
 
 	return reviews, nil
+}
+
+type Entity struct {
+	ID         string    `db:"id"`
+	ExternalID string    `db:"external_id"`
+	Name       string    `db:"name"`
+	Source     string    `db:"source"`
+	CreatedAt  time.Time `db:"created_at"`
+}
+
+type CreateEntityParams struct {
+	ExternalID string `db:"external_id"`
+	Name       string `db:"name"`
+	Source     string `db:"source"`
+}
+
+func (db *dbImpl) CreateEntity(ctx context.Context, params *CreateEntityParams) (*Entity, error) {
+	query := `
+        INSERT INTO entities (external_id, name, source)
+        VALUES ($1, $2, $3)
+        RETURNING id, external_id, name, source, created_at
+    `
+	entity := &Entity{}
+
+	if err := db.QueryRowContext(ctx,
+		query,
+		params.ExternalID,
+		params.Name,
+		params.Source,
+	).Scan(
+		&entity.ID,
+		&entity.ExternalID,
+		&entity.Name,
+		&entity.Source,
+		&entity.CreatedAt,
+	); err != nil {
+		return nil, fmt.Errorf("insert entity: %w", err)
+	}
+
+	return entity, nil
 }

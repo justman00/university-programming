@@ -114,6 +114,7 @@ func (h *handler) GetReviewsHandler(c echo.Context) error {
 type EnrolClient struct {
 	EnrolClientID string `json:"client_id"`
 	Source        string `json:"source"`
+	Name          string `json:"name"`
 }
 
 func (h *handler) EnrolClientHandler(c echo.Context) error {
@@ -122,6 +123,15 @@ func (h *handler) EnrolClientHandler(c echo.Context) error {
 	enrolClient := new(EnrolClient)
 	if err := c.Bind(enrolClient); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "invalid request")
+	}
+
+	entity, err := h.dbInstance.CreateEntity(ctx, &db.CreateEntityParams{
+		ExternalID: enrolClient.EnrolClientID,
+		Name:       enrolClient.Name,
+		Source:     enrolClient.Source,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create entity: %w", err)
 	}
 
 	reviews, err := h.trustpilotClient.GetReviews(ctx, enrolClient.EnrolClientID)
@@ -138,6 +148,7 @@ func (h *handler) EnrolClientHandler(c echo.Context) error {
 			URL:       review.URL(),
 			Contents:  review.Text,
 			Source:    enrolClient.Source,
+			EntityID:  entity.ID,
 			Rating:    review.Stars,
 		})
 		if err != nil {
@@ -153,5 +164,5 @@ func (h *handler) EnrolClientHandler(c echo.Context) error {
 		}
 	}
 
-	return c.String(http.StatusOK, "Hello, World!")
+	return c.JSON(http.StatusOK, entity)
 }

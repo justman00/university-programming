@@ -24,6 +24,7 @@ type TypeReviewSubmittedPayload struct {
 	URL       string
 	Contents  string
 	Source    string
+	EntityID  string
 	Rating    int
 }
 
@@ -54,6 +55,7 @@ type ChatgptResponse struct {
 	Emotion             string `json:"emotion"`
 	TopicClassification string `json:"topic_classification"`
 	Justification       string `json:"justification"`
+	Translation         string `json:"translation"`
 }
 
 func (processor *ReviewProcessor) ProcessTask(ctx context.Context, t *asynq.Task) (err error) {
@@ -94,6 +96,7 @@ func (processor *ReviewProcessor) ProcessTask(ctx context.Context, t *asynq.Task
 		Review:          p.Contents,
 		Analysis:        answer.AnswerText,
 		OriginalPayload: string(t.Payload()),
+		EntityID:        p.EntityID,
 		ReviewCreatedAt: p.CreatedAt,
 		ReviewUpdatedAt: p.CreatedAt,
 	}); err != nil {
@@ -131,7 +134,7 @@ You are an AI designed to analyze and categorize customer feedback based on sent
         "topic_classification": "direct_integration"
     },
     {
-        "example_feedback": "Not able to get a response to my issue\nI want to change my account name and bank details but not getting any response. I’ve asked them to let me know that if it’s not possible that I want to then close my account and stop getting people to pay me via Sumup!! I’ve money sitting there but I can’t access it.\n\nAlso I called their customer service who told me the reader was purchased last year which is ridiculous because I bought it a week ago. Are they selling refurbished readers??\n\nI’m feeling uneasy with Sumup and stuck because I can’t even close my account!\n\nDate of experience: 12 August 2023",
+        "example_feedback": "Not able to get a response to my issue\nI want to change my account name and bank details but not getting any response. I've asked them to let me know that if it's not possible that I want to then close my account and stop getting people to pay me via Sumup!! I've money sitting there but I can't access it.\n\nAlso I called their customer service who told me the reader was purchased last year which is ridiculous because I bought it a week ago. Are they selling refurbished readers??\n\nI'm feeling uneasy with Sumup and stuck because I can't even close my account!\n\nDate of experience: 12 August 2023",
         "topic_classification": "card_reader"
     },
     {
@@ -143,7 +146,7 @@ You are an AI designed to analyze and categorize customer feedback based on sent
         "topic_classification": "pos"
     },
     {
-        "example_feedback": "I have been a business customer with SumUp since 2018. Through word of mouth, and due to my love of their products (terminals, POS, invoices, links) I signed up two of my businesses to SumUp and referred many connections who bought terminals too.\n\nUnfortunately, now that the company has grown so rapidly, and expanded its product range, I have noticed a steep decline in the quality of customer service. I have not been able to resolve any issues in the past 12 months via live chat or phone call. It’s an Indian or Chinese call centre who are robotic in their replies. Very little help.\n\nThe life of the terminals is not what it used to be either - especially the Solo - which recently died on me.\n\nI am now transitioning my businesses to Square.\n\nDate of experience: 22 July 2023",
+        "example_feedback": "I have been a business customer with SumUp since 2018. Through word of mouth, and due to my love of their products (terminals, POS, invoices, links) I signed up two of my businesses to SumUp and referred many connections who bought terminals too.\n\nUnfortunately, now that the company has grown so rapidly, and expanded its product range, I have noticed a steep decline in the quality of customer service. I have not been able to resolve any issues in the past 12 months via live chat or phone call. It's an Indian or Chinese call centre who are robotic in their replies. Very little help.\n\nThe life of the terminals is not what it used to be either - especially the Solo - which recently died on me.\n\nI am now transitioning my businesses to Square.\n\nDate of experience: 22 July 2023",
         "topic_classification": "customer_service"
     },
     {
@@ -159,7 +162,7 @@ You are an AI designed to analyze and categorize customer feedback based on sent
         "topic_classification": "card_reader"
     },
     {
-        "example_feedback": "These guys promise a lot but do nothing to help small business owners.\n\nFor starters you can forget about next day settlement payments as they literally free style when and what time you should receive your money.\n\nIt’s been 4 days and my card company have cleared 4 payments to my sum up business account which only I’ve received one payment only!! I’ve called sum up support team multiple times there’s no actual urgency to find out where the money is and how long it will take to receive my money. I’ve emailed them proofs that my card company have sent them my money still I’ve heard nothing.\n\nI don’t understand how a company like this doesn’t get properly regulated by the financial conduct authorities and I will be passing my case to them hopefully somethings gets done because I’m sure I’m not the only one.",
+        "example_feedback": "These guys promise a lot but do nothing to help small business owners.\n\nFor starters you can forget about next day settlement payments as they literally free style when and what time you should receive your money.\n\nIt's been 4 days and my card company have cleared 4 payments to my sum up business account which only I've received one payment only!! I've called sum up support team multiple times there's no actual urgency to find out where the money is and how long it will take to receive my money. I've emailed them proofs that my card company have sent them my money still I've heard nothing.\n\nI don't understand how a company like this doesn't get properly regulated by the financial conduct authorities and I will be passing my case to them hopefully somethings gets done because I'm sure I'm not the only one.",
         "topic_classification": "business_account"
     },
     {
@@ -171,15 +174,15 @@ You are an AI designed to analyze and categorize customer feedback based on sent
         "topic_classification": "customer_service"
     },
     {
-        "example_feedback": "Do not use SumUp and specifically Do NOT use “SumUp Pay”. Claims everywhere you can withdraw at any time but that’s a lie! Not even an option and now many is held against my wishes with no choice but to spend it before my account can be closed. Terrible follow up service waiting days for a reply. My bank also treated it as a cash transaction so charged me up front and interest! No offer of help at all.",
+        "example_feedback": "Do not use SumUp and specifically Do NOT use “SumUp Pay”. Claims everywhere you can withdraw at any time but that's a lie! Not even an option and now many is held against my wishes with no choice but to spend it before my account can be closed. Terrible follow up service waiting days for a reply. My bank also treated it as a cash transaction so charged me up front and interest! No offer of help at all.",
         "topic_classification": "sumup_pay"
     },
     {
         "example_feedback": "This is an amazing set up for small business. Card machine is wireless, easy to use, compact and looks good.\nPayout frequently can be set, I prefer daily. Customer not present option is a help. Love that I can just txt an invoice with payment links. Only thing I wish they would resume is the 'cash advance' Brilliant, quick, cheap way of fast lending without all the hassle. You don't even notice the repayments. This machine is a definite asset to a small business. 100% recommended.",
-        "topic_classification": "cash_advance"
+        "topic_classification": "lending"
     },
     {
-        "example_feedback": "It all looked very good on the packaging, promises of quick payouts etc. I raised an invoice via the SumUp app to which my customer promptly paid, when I looked on the application to find out if the money had landed in my bank account I had a message informing me that my account was restricted pending verification. I questioned this and was asked to send copy of the invoice to SumUp to validate, this by the way way the invoice raised on the SumUp app! I sent the invoice anyway and are still waiting for someone to validate this invoice, why on earth god only knows ! This delay in payment is unacceptable when they boast of quick payments (3 days now!) I’m having to ask my customer to cancel the transaction and find another payment method. I do notice that more than 25% of the reviews about SumUp are less than happy !",
+        "example_feedback": "It all looked very good on the packaging, promises of quick payouts etc. I raised an invoice via the SumUp app to which my customer promptly paid, when I looked on the application to find out if the money had landed in my bank account I had a message informing me that my account was restricted pending verification. I questioned this and was asked to send copy of the invoice to SumUp to validate, this by the way way the invoice raised on the SumUp app! I sent the invoice anyway and are still waiting for someone to validate this invoice, why on earth god only knows ! This delay in payment is unacceptable when they boast of quick payments (3 days now!) I'm having to ask my customer to cancel the transaction and find another payment method. I do notice that more than 25% of the reviews about SumUp are less than happy !",
         "topic_classification": "invoices"
     },
     {
@@ -195,7 +198,7 @@ You are an AI designed to analyze and categorize customer feedback based on sent
         "topic_classification": "accounting"
     },
     {
-        "example_feedback": "Not even managed to use it yet. My account has been blocked for verification for 5 days already. Can’t even logon to use to chat to get help. Phoned customer service and all they did was say yes your account is being verified and yes we’ve received your id, you just have to wait. I totally get that things need to be checked but this is ridiculous Really not happy Gone to square and everything was sorted in a couple of hours.",
+        "example_feedback": "Not even managed to use it yet. My account has been blocked for verification for 5 days already. Can't even logon to use to chat to get help. Phoned customer service and all they did was say yes your account is being verified and yes we've received your id, you just have to wait. I totally get that things need to be checked but this is ridiculous Really not happy Gone to square and everything was sorted in a couple of hours.",
         "topic_classification": "verification"
     },
     {
@@ -219,11 +222,11 @@ You are an AI designed to analyze and categorize customer feedback based on sent
         "topic_classification": "solo_card_reader"
     },
     {
-        "example_feedback": "I have been a SumUp user for several years. This week we have had a problem. Someone infiltrated the SumUp security and changed the password on the account. It appears to be impossible to regain control. The infiltrator has not changed the bank account for receipts (and I guess cannot) but I cannot issue invoices or correlate payments received to outstanding invoices. I spent ages on phone yesterday trying to resolve - this ended with the agent saying she could not and would have to ‘escalate’ the issue. I was promised a call back which has not materialised. After a long time as a satisfied user of SumUp, I am now entertaining doubts as to whether I should continue to work with it. This review is, ultimately, an attempt to get SumUp to resolve the problem…",
+        "example_feedback": "I have been a SumUp user for several years. This week we have had a problem. Someone infiltrated the SumUp security and changed the password on the account. It appears to be impossible to regain control. The infiltrator has not changed the bank account for receipts (and I guess cannot) but I cannot issue invoices or correlate payments received to outstanding invoices. I spent ages on phone yesterday trying to resolve - this ended with the agent saying she could not and would have to 'escalate' the issue. I was promised a call back which has not materialised. After a long time as a satisfied user of SumUp, I am now entertaining doubts as to whether I should continue to work with it. This review is, ultimately, an attempt to get SumUp to resolve the problem…",
         "topic_classification": "customer_service"
     },
     {
-        "example_feedback": "I’ve used sun up for years (about 6-7) and always been happy, no problems. So I decided to use it for my other business too, so I set up an account with the email for my other business & couldn’t get past the setting up bank details, it just sent me round in circles. I emailed customer service and every time they told me to try something, it made no difference. Eventually they said to create a new account with a new email address (I had to create another email address just for this which was a pain) & it still did the same. It just won’t accept my bank details. I emailed again to complain and this time they’ve just ignored my email completely.",
+        "example_feedback": "I've used sun up for years (about 6-7) and always been happy, no problems. So I decided to use it for my other business too, so I set up an account with the email for my other business & couldn't get past the setting up bank details, it just sent me round in circles. I emailed customer service and every time they told me to try something, it made no difference. Eventually they said to create a new account with a new email address (I had to create another email address just for this which was a pain) & it still did the same. It just won't accept my bank details. I emailed again to complain and this time they've just ignored my email completely.",
         "topic_classification": "customer_service"
     },
     {
@@ -260,9 +263,10 @@ You are an AI designed to analyze and categorize customer feedback based on sent
     }
 ]
 Here is your task:
+- Translate the feedback into English for better understanding.
 - Analyze the sentiment of each customer feedback and categorize it as "positive", "neutral", "mixed", or "negative".
 - Identify the emotion conveyed in the feedback, categorizing it as "anger", "anxiety", "confused", "delight", "disappointed", "indifferent", "regrets", "safe", "skeptical", "stressed", "surprise", or "trust".
-- Based on the example feedback, classify the given customer feedback into one of the available topic classifications: "solo_card_reader", "card_reader", "pos", "qr_code", "direct_integration", "online_store", "customer_service", "business_account", "sumup_pay", "verification", "accounting", "invoices", "cash_advance".
+- Based on the example feedback, classify the given customer feedback into one of the available topic classifications: "solo_card_reader", "card_reader", "pos", "qr_code", "direct_integration", "online_store", "customer_service", "business_account", "sumup_pay", "verification", "accounting", "invoices", "lending".
 - If the feedback can be classified into more than one category, list all categories separated by a comma. If none of the given topics fit, classify as "other".
 - Provide a brief justification for your classifications.
 Output a JSON object in the following format:
@@ -270,7 +274,8 @@ Output a JSON object in the following format:
 	"sentiment": "<sentiment_value>",
 	"emotion": "<emotion_value>",
 	"topic_classification": "<topic_classification_value(s)>",
-    "justification": "<justification_string>"
+    "justification": "<justification_string>",
+    "translation": "<translation_string>"
 }
 Remember, only respond with the JSON object, even if the provided feedback is in any other language than English.
 `

@@ -10,6 +10,7 @@ import (
 	"github.com/justman00/teza-de-licenta/internal/db"
 	"github.com/justman00/teza-de-licenta/internal/importers/trustpilot"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -39,6 +40,8 @@ func ServeCMD() *cobra.Command {
 					Addr: os.Getenv("REDIS_ADDR"),
 				},
 			})
+
+			g.Use(middleware.Logger())
 
 			e.Any("/monitoring/tasks/*", echo.WrapHandler(mon))
 			g.GET("/health", func(c echo.Context) error {

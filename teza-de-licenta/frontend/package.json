@@ -1,0 +1,33 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/css": "^11.11.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@sumup/circuit-ui": "https://registry.npmjs.org/@sumup/circuit-ui/-/circuit-ui-7.0.0.tgz",
+    "@sumup/collector": "https://registry.npmjs.org/@sumup/collector/-/collector-1.6.1.tgz",
+    "@sumup/design-tokens": "https://registry.npmjs.org/@sumup/design-tokens/-/design-tokens-6.0.0.tgz",
+    "@sumup/icons": "https://registry.npmjs.org/@sumup/icons/-/icons-3.0.0.tgz",
+    "@sumup/intl": "https://registry.npmjs.org/@sumup/intl/-/intl-1.5.0.tgz",
+    "@types/node": "20.6.0",
+    "@types/react": "18.2.21",
+    "@types/react-dom": "18.2.7",
+    "autoprefixer": "10.4.15",
+    "eslint": "8.49.0",
+    "eslint-config-next": "13.4.19",
+    "next": "13.4.19",
+    "postcss": "8.4.29",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-google-charts": "^4.0.1",
+    "typescript": "5.2.2"
+  }
+}

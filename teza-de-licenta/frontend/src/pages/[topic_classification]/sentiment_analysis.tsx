@@ -57,6 +57,7 @@ const TopicClassification = () => {
             { children: 'Source' },
             { children: 'Description' },
             { children: 'Sentiment Analysis' },
+            { children: 'Emotion' },
             { children: 'Topic Classification' },
             { children: 'Rating' },
             { children: 'Created At' },
@@ -64,9 +65,10 @@ const TopicClassification = () => {
           rows={reviews.map((review) => ({
             cells: [
               review.source,
-              review.feedback,
-              review.sentiment_analysis,
-              review.topic_classification,
+              review.contents,
+              review.sentiment,
+              review.emotion,
+              review.topic_classification.join(', '),
               review.rating,
               review.created_at,
             ],
@@ -79,7 +81,7 @@ const TopicClassification = () => {
 
 const mapReviews = (reviews: Review[]) => {
   const sentimentAnalysis = reviews.reduce((acc, review) => {
-    const sentimentAnalysis = review.sentiment_analysis;
+    const sentimentAnalysis = review.sentiment;
     if (!acc[sentimentAnalysis]) {
       acc[sentimentAnalysis] = 0;
     }

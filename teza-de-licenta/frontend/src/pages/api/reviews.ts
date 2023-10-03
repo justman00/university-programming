@@ -2,14 +2,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const url = new URL('http://localhost:8080/api/reviews');
-    // url.searchParams.append('source', source);
-    // url.searchParams.append('limit', '1000');
-    // if (selectedTopic) {
-    //   url.searchParams.append('topic_classification', selectedTopic);
-    // }
+    const searchParams = new URLSearchParams(req.query as Record<string, string>);
 
-    const response = await fetch(url.toString());
+    const response = await fetch(`http://localhost:8080/api/reviews?${searchParams.toString()}`);
     const data = await response.json();
     const reviews = Array.isArray(data) ? data : [];
 

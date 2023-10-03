@@ -47,9 +47,9 @@ const Analysis = () => {
   useEffect(() => {
     if (selectedTopicIndex !== -1) {
       console.log('selectedTopicIndex', selectedTopicIndex);
-      // const topicClassification = mappedReviews[selectedTopicIndex + 1][0];
+      const topicClassification = mappedReviews[selectedTopicIndex + 1][0];
 
-      // router.push(`/${topicClassification}/sentiment_analysis`);
+      router.push(`/${topicClassification}/sentiment_analysis`);
     }
   }, [mappedReviews, selectedTopicIndex, router]);
 
@@ -64,6 +64,7 @@ const Analysis = () => {
   const callback = ({ chartWrapper, google }: { chartWrapper: any; google: any }) => {
     const chart = chartWrapper.getChart();
     google.visualization.events.addListener(chart, 'click', (e: any) => {
+      console.log('click click');
       let id = e.targetID?.split('#')[1];
 
       console.log('id', id);
@@ -82,22 +83,18 @@ const Analysis = () => {
           Analysis
         </StyledTitle>
         <StyledBody>Analyze the reviews fetched from different sources and analyzed by our AI.</StyledBody>
-        {reviews.length > 0 ? (
-          <Chart
-            chartType="PieChart"
-            data={mappedReviews}
-            width={'100%'}
-            height={'700px'}
-            chartEvents={[
-              {
-                eventName: 'ready',
-                callback,
-              },
-            ]}
-          />
-        ) : (
-          <div>Loading...</div>
-        )}
+        <Chart
+          chartType="PieChart"
+          data={mappedReviews}
+          width={'100%'}
+          height={'700px'}
+          chartEvents={[
+            {
+              eventName: 'ready',
+              callback,
+            },
+          ]}
+        />
       </Container>
     </Layout>
   );
@@ -107,9 +104,7 @@ const mapReviews = (reviews: Review[]) => {
   // count the number of reviews based on topic classification
   const topicClassification = reviews.reduce((acc, review) => {
     const topics = review.topic_classification;
-    topics.forEach((t) => {
-      const topic = t.trim();
-
+    topics.forEach((topic) => {
       if (!acc[topic]) {
         acc[topic] = 0;
       }

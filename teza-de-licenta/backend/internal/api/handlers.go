@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/hibiken/asynq"
 	"github.com/justman00/teza-de-licenta/internal/db"
@@ -43,11 +44,47 @@ type Analysis struct {
 func (h *handler) GetReviewsHandler(c echo.Context) error {
 	ctx := c.Request().Context()
 
+	var source *string
+	if s := c.QueryParam("source"); s != "" {
+		source = &s
+	}
+
+	var limit int
+	if l := c.QueryParam("limit"); l != "" {
+		parsedLimit, err := strconv.Atoi(l)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "invalid limit")
+		}
+
+		limit = parsedLimit
+	} else {
+		limit = 1000
+	}
+
+	var topicClassification *string
+	if tc := c.QueryParam("topic_classification"); tc != "" {
+		topicClassification = &tc
+	}
+
+	var emotion *string
+	if e := c.QueryParam("emotion"); e != "" {
+		emotion = &e
+	}
+
+	var sentiment *string
+	if s := c.QueryParam("sentiment"); s != "" {
+		sentiment = &s
+	}
+
 	reviews, err := h.dbInstance.GetReviews(ctx, &db.GetReviewsParams{
-		Limit: 1000,
+		Limit:               limit,
+		Source:              source,
+		TopicClassification: topicClassification,
+		Emotion:             emotion,
+		Sentiment:           sentiment,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get reviews: %w", err)
 	}
 
 	formattedReviews := make([]*Review, 0, len(reviews))

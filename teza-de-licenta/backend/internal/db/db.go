@@ -107,14 +107,22 @@ type GetReviewsParams struct {
 
 func (db *dbImpl) GetReviews(ctx context.Context, params *GetReviewsParams) ([]*Review, error) {
 	query := `
-    SELECT *
-    FROM reviews
-    LIMIT $1;
-`
+	SELECT *
+	FROM reviews
+	WHERE ($1::text is NULL OR source = $1)
+		AND ($2::text is NULL OR analysis->>'emotion' = $2)
+		AND ($3::text is NULL OR analysis->>'sentiment' = $3)
+		AND ($4::text is NULL OR analysis->'topic_classification' @> to_jsonb(string_to_array($4, ',')::text[]))
+	LIMIT $5;
+	`
 
 	// TODO: add filters
 	reviews := []*Review{}
 	err := db.SelectContext(ctx, &reviews, query,
+		params.Source,
+		params.Emotion,
+		params.Sentiment,
+		params.TopicClassification,
 		params.Limit,
 	)
 	if err != nil {

@@ -23,6 +23,11 @@ var S1 = [][][]int{
 func main() {
 	input := "Buna ziua domnul profesor, as putea sa am nota 10 la examen?"
 
+	if !validateASCIIinput(input) {
+		fmt.Println("ERROR: Input is not valid ASCII")
+		return
+	}
+
 	// convert the input to bits
 	inputInBits := ASCIItoBits(input)
 
@@ -202,7 +207,7 @@ func bitsToASCII(input [][]int) string {
 	result := ""
 
 	for _, bits := range input {
-		result += string(bitsToInt(bits))
+		result += string(rune(bitsToInt(bits)))
 	}
 
 	return result
@@ -226,18 +231,4 @@ func bitsToInt(val []int) int {
 	}
 
 	return result
-}
-
-func areEqual(val1, val2 []int) bool {
-	if len(val1) != len(val2) {
-		return false
-	}
-
-	for i, v := range val1 {
-		if v != val2[i] {
-			return false
-		}
-	}
-
-	return true
 }

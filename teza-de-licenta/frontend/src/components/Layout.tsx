@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from '@emotion/react';
-import { SIDE_PANEL_WIDTH, SideNavigation, TOP_NAVIGATION_HEIGHT, TopNavigation } from '@sumup/circuit-ui';
-import { Gauge, Search, SumUpCard, SumUpLogo } from '@sumup/icons';
+import { SideNavigation, TOP_NAVIGATION_HEIGHT } from '@sumup/circuit-ui';
+import { Gauge, Search } from '@sumup/icons';
 import styled from '@emotion/styled';
 import { useRouter } from 'next/router';
 

@@ -70,9 +70,9 @@ func NewTrustpilotClient(apiKey string) *TrustpilotClient {
 
 const trustpilotAPISchema = "https://api.trustpilot.com/v1/business-units/%s/all-reviews"
 
-func (c *TrustpilotClient) GetReviews(ctx context.Context, businessUnitID string, limit int) ([]TrustpilotReview, error) {
+func (c *TrustpilotClient) GetReviews(ctx context.Context, businessUnitID string, limit *int) ([]TrustpilotReview, error) {
 	var reviews []TrustpilotReview
-	var nextPageToken string = "MjAyMy0wNy0yOFQxMjowMzo1Ny4wMDBafDY0YzM5MjhkOGU4ODhjYzZmZTBhNTI4Zg"
+	var nextPageToken string = ""
 
 	for {
 		logrus.Infof("fetching reviews from trustpilot api, next page: %s, current reviews: %d", nextPageToken, len(reviews))
@@ -123,7 +123,12 @@ func (c *TrustpilotClient) GetReviews(ctx context.Context, businessUnitID string
 		}
 		reviews = append(reviews, response.Reviews[0:300]...)
 		nextPageToken = response.NextPageToken
-		if nextPageToken == "" || len(reviews) >= limit {
+
+		if nextPageToken == "" {
+			break
+		}
+
+		if limit != nil && len(reviews) >= *limit {
 			break
 		}
 	}

@@ -15,11 +15,22 @@ import (
 	"github.com/justman00/teza-de-licenta/internal/tasks"
 )
 
+func init() {
+	// Log as JSON instead of the default ASCII formatter.
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+
+	// Output to stdout instead of the default stderr
+	// Can be any io.Writer, see below for File example
+	logrus.SetOutput(os.Stdout)
+}
+
 func WorkerCMD() *cobra.Command {
 	var serveCMD = &cobra.Command{
 		Use:   "worker",
 		Short: "`worker` este comanda care porneste procesul ce va prelucra datele in background.",
 		Run: func(cmd *cobra.Command, args []string) {
+			logrus.Info("starting worker...")
+
 			dbInstance, err := db.New()
 			if err != nil {
 				logrus.Fatalf("failed to create db instance: %v", err)

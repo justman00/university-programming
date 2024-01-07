@@ -28,6 +28,8 @@ type Review struct {
 	ID                 string   `json:"id"`
 	Rating             int      `json:"rating"`
 	Contents           string   `json:"contents"`
+	Translation        string   `json:"translation"`
+	Justification      string   `json:"justification"`
 	TopiClassification []string `json:"topic_classification"`
 	Sentiment          string   `json:"sentiment"`
 	Emotion            string   `json:"emotion"`
@@ -39,6 +41,8 @@ type Analysis struct {
 	TopicClassification []string `json:"topic_classification"`
 	Sentiment           string   `json:"sentiment"`
 	Emotion             string   `json:"emotion"`
+	Justification       string   `json:"justification"`
+	Translation         string   `json:"translation"`
 }
 
 func (h *handler) GetReviewsHandler(c echo.Context) error {
@@ -92,7 +96,7 @@ func (h *handler) GetReviewsHandler(c echo.Context) error {
 		var analysis *Analysis
 		if review.Analysis != "" {
 			if err := json.Unmarshal([]byte(review.Analysis), &analysis); err != nil {
-				return fmt.Errorf("failed to unmarshal analysis: %w", err)
+				return fmt.Errorf("failed to unmarshal analysis: %w, analysis: %s", err, review.Analysis)
 			}
 		}
 
@@ -100,6 +104,8 @@ func (h *handler) GetReviewsHandler(c echo.Context) error {
 			ID:                 review.ID.String(),
 			Rating:             review.Rating,
 			Contents:           review.Review,
+			Translation:        analysis.Translation,
+			Justification:      analysis.Justification,
 			TopiClassification: analysis.TopicClassification,
 			Sentiment:          analysis.Sentiment,
 			Emotion:            analysis.Emotion,
@@ -115,7 +121,7 @@ type EnrolClient struct {
 	EnrolClientID string `json:"client_id"`
 	Source        string `json:"source"`
 	Name          string `json:"name"`
-	Limit         int    `json:"limit"`
+	Limit         *int   `json:"limit"`
 }
 
 func (h *handler) EnrolClientHandler(c echo.Context) error {

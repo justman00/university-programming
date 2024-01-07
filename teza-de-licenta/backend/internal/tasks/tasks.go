@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -50,11 +51,27 @@ func NewReviewProcessor(chatgptClient chatgpt.Client, dbInstance db.DB) *ReviewP
 }
 
 type ChatgptResponse struct {
-	Sentiment           string `json:"sentiment"`
-	Emotion             string `json:"emotion"`
-	TopicClassification string `json:"topic_classification"`
-	Justification       string `json:"justification"`
-	Translation         string `json:"translation"`
+	Sentiment           string                   `json:"sentiment"`
+	Emotion             string                   `json:"emotion"`
+	TopicClassification TopicClassificationArray `json:"topic_classification"`
+	Justification       string                   `json:"justification"`
+	Translation         string                   `json:"translation"`
+}
+
+type TopicClassificationArray []string
+
+func (t *TopicClassificationArray) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return fmt.Errorf("failed to unmarshal topic classification: %w", err)
+	}
+
+	s = strings.ReplaceAll(s, " ", "")
+	topicClassificationArray := strings.Split(s, ",")
+
+	*t = topicClassificationArray
+
+	return nil
 }
 
 func (processor *ReviewProcessor) ProcessTask(ctx context.Context, t *asynq.Task) (err error) {
@@ -88,12 +105,18 @@ func (processor *ReviewProcessor) ProcessTask(ctx context.Context, t *asynq.Task
 		return fmt.Errorf("unmarshal chatgpt response: %w", err)
 	}
 
+	// yolo
+	marshaledResponse, err := json.Marshal(chatGPTResponse)
+	if err != nil {
+		return fmt.Errorf("marshal chatgpt response to obbey db: %w", err)
+	}
+
 	if err := processor.dbInstance.InsertReview(ctx, &db.InsertReviewParams{
 		ID:              uuid.New(),
 		Rating:          p.Rating,
 		Source:          p.Source,
 		Review:          p.Contents,
-		Analysis:        answer.AnswerText,
+		Analysis:        string(marshaledResponse),
 		OriginalPayload: string(t.Payload()),
 		EntityID:        p.EntityID,
 		ReviewCreatedAt: p.CreatedAt,
@@ -276,7 +299,7 @@ Output a JSON object in the following format:
     "justification": "<justification_string>",
     "translation": "<translation_string>"
 }
-Remember, only respond with the JSON object, even if the provided feedback is in any other language than English.
+Answer only with the JSON object, even if the provided feedback is in any other language than English.
 `
 
 func generateUserPrompt(r string) string {

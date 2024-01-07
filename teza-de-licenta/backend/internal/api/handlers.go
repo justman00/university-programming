@@ -115,6 +115,7 @@ type EnrolClient struct {
 	EnrolClientID string `json:"client_id"`
 	Source        string `json:"source"`
 	Name          string `json:"name"`
+	Limit         int    `json:"limit"`
 }
 
 func (h *handler) EnrolClientHandler(c echo.Context) error {
@@ -134,7 +135,7 @@ func (h *handler) EnrolClientHandler(c echo.Context) error {
 		return fmt.Errorf("failed to create entity: %w", err)
 	}
 
-	reviews, err := h.trustpilotClient.GetReviews(ctx, enrolClient.EnrolClientID)
+	reviews, err := h.trustpilotClient.GetReviews(ctx, enrolClient.EnrolClientID, enrolClient.Limit)
 	if err != nil {
 		logrus.Errorf("failed to get reviews: %v", err)
 

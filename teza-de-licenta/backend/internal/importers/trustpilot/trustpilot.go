@@ -70,7 +70,7 @@ func NewTrustpilotClient(apiKey string) *TrustpilotClient {
 
 const trustpilotAPISchema = "https://api.trustpilot.com/v1/business-units/%s/all-reviews"
 
-func (c *TrustpilotClient) GetReviews(ctx context.Context, businessUnitID string) ([]TrustpilotReview, error) {
+func (c *TrustpilotClient) GetReviews(ctx context.Context, businessUnitID string, limit int) ([]TrustpilotReview, error) {
 	var reviews []TrustpilotReview
 	var nextPageToken string = "MjAyMy0wNy0yOFQxMjowMzo1Ny4wMDBafDY0YzM5MjhkOGU4ODhjYzZmZTBhNTI4Zg"
 
@@ -123,7 +123,7 @@ func (c *TrustpilotClient) GetReviews(ctx context.Context, businessUnitID string
 		}
 		reviews = append(reviews, response.Reviews[0:300]...)
 		nextPageToken = response.NextPageToken
-		if nextPageToken == "" || true {
+		if nextPageToken == "" || len(reviews) >= limit {
 			break
 		}
 	}

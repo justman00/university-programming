@@ -49,7 +49,6 @@ func NewReviewProcessor(chatgptClient chatgpt.Client, dbInstance db.DB) *ReviewP
 	}
 }
 
-// TODO: use this struct to validate the chatgpt answer
 type ChatgptResponse struct {
 	Sentiment           string `json:"sentiment"`
 	Emotion             string `json:"emotion"`

@@ -6,7 +6,7 @@
 #include "srv_ui_serial/srv_ui_serial.h"
 #include "srv_ctrl_temp/srv_ctrl_temp.h"
 
-// define two tasks for Blink & AnalogRead
+// define tasks Serial Input, DHT, Relay, Control Temperature
 void Task_dd_ui_serial(void *pvParameters);
 void Task_dd_dht(void *pvParameters);
 void Task_dd_relay(void *pvParameters);

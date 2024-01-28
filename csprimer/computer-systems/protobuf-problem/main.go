@@ -26,7 +26,7 @@ func main() {
 	one := binary.BigEndian.Uint64(oneByteSlice)
 	oneHundredFifty := binary.BigEndian.Uint64(oneHundredFiftyByteSlice)
 
-	testCases := []uint64{maxInt, one, oneHundredFifty, uint64(72)}
+	testCases := []uint64{maxInt, one, oneHundredFifty, uint64(73676)}
 
 	for _, testCase := range testCases {
 		fmt.Println("-----------------------------------")
@@ -73,9 +73,11 @@ func encode(num uint64) []byte {
 func decode(encoded []byte) (decoded uint64) {
 	slices.Reverse(encoded)
 	for _, b := range encoded {
+		// shift decoded by 7 bits so that we increase the number by 7 bits
+		// on each iteration
 		decoded = decoded << 7
-		fmt.Printf("decoded in binary foramt: %b, %b \n", b, b&0b01111111)
-		decoded |= uint64(b & 0b01111111)
+		// add the lowest 7 bits of the current byte, we remove the msb
+		decoded |= uint64(b & 0x7F)
 	}
 	return decoded
 }

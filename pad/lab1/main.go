@@ -17,27 +17,42 @@ func secondImpl() {
 	var wg sync.WaitGroup
 	wg.Add(5)
 
-	firstChan := make(chan struct{}, 3)
-	secondChan := make(chan struct{}, 3)
+	wgForOne := sync.WaitGroup{}
+	wgForOne.Add(1)
+
+	wgForSecondStep := sync.WaitGroup{}
+	wgForSecondStep.Add(3)
+
+	// firstChan := make(chan struct{}, 3)
+	// secondChan := make(chan struct{}, 3)
 
 	for i := 1; i < 6; i++ {
 		go func(i int) {
 			fmt.Printf("starting %d goroutine\n", i)
 			if i == 1 {
-				defer func() {
-					for i := 0; i < 3; i++ {
-						firstChan <- struct{}{}
-					}
-				}()
+				wgForOne.Done()
+				// defer func() {
+				// 	for i := 0; i < 3; i++ {
+				// 		firstChan <- struct{}{}
+				// 	}
+				// }()
 			} else if i == 5 {
-				for i := 0; i < 3; i++ {
-					<-secondChan
-				}
+				wgForSecondStep.Wait()
+				// for i := 0; i < 3; i++ {
+				// 	<-secondChan
+				// }
 			} else {
-				<-firstChan
+				wgForOne.Wait()
+
+				// o sa ruleze de 3 ori
 				defer func() {
-					secondChan <- struct{}{}
+					wgForSecondStep.Done()
 				}()
+				// write to struct
+				// <-firstChan
+				// defer func() {
+				// 	secondChan <- struct{}{}
+				// }()
 			}
 
 			// sleepForUpToFiveSeconds()

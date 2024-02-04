@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/big"
 	"os"
 
 	"golang.org/x/term"
@@ -22,13 +21,13 @@ func main() {
 		if _, err := os.Stdin.Read(b); err != nil {
 			panic(err)
 		}
-		charCode := int(big.NewInt(0).SetBytes(b).Uint64())
+		data := int(b[0])
 
-		if charCode == 3 {
+		if data == 3 {
 			return
 		}
 
-		if string(b) != "B" {
+		if data != 66 {
 			continue
 		}
 

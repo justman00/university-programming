@@ -77,36 +77,55 @@ func hexToRGB(hex string) (int, int, int, float64) {
 		panic("invalid hex code")
 	}
 
-	// convert hex to rgb
-	parsedR, err := strconv.ParseInt(r, 16, 64)
-	if err != nil {
-		panic(err)
-	}
-
-	parsedG, err := strconv.ParseInt(g, 16, 64)
-	if err != nil {
-		panic(err)
-	}
-
-	parsedB, err := strconv.ParseInt(b, 16, 64)
-	if err != nil {
-		panic(err)
-	}
-
-	// convert alpha to float
 	var parsedAlpha float64
 	if alpha != "" {
-		alphaInt, err := strconv.ParseInt(alpha, 16, 64)
-		if err != nil {
-			panic(err)
-		}
-
-		parsedAlpha = float64(alphaInt) / 255
+		parsedAlpha = float64(hexToDecimal(alpha)) / 255
 	} else {
 		parsedAlpha = 1
 	}
 
-	return int(parsedR), int(parsedG), int(parsedB), parsedAlpha
+	return hexToDecimal(r), hexToDecimal(g), hexToDecimal(b), parsedAlpha
+}
+
+var hexMap = map[string]int{
+	"0": 0,
+	"1": 1,
+	"2": 2,
+	"3": 3,
+	"4": 4,
+	"5": 5,
+	"6": 6,
+	"7": 7,
+	"8": 8,
+	"9": 9,
+	"a": 10,
+	"b": 11,
+	"c": 12,
+	"d": 13,
+	"e": 14,
+	"f": 15,
+	"A": 10,
+	"B": 11,
+	"C": 12,
+	"D": 13,
+	"E": 14,
+	"F": 15,
+}
+
+func hexToDecimal(hex string) int {
+	var res int
+
+	fmt.Println(hex)
+
+	if len(hex) == 1 {
+		res = hexMap[hex]
+	} else {
+		firstVal := hexMap[string(hex[0])]
+		shiftedVal := firstVal << 4
+		res = shiftedVal + hexMap[string(hex[1])]
+	}
+
+	return res
 }
 
 func formatCssProperty(r, g, b int, alpha float64) string {
